@@ -1,0 +1,1298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>BOSS SYSTEM</title>
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700;800&family=Inter:wght@400;500;600;700&family=Share+Tech+Mono&display=swap');
+:root{color-scheme:dark;--blood:#b20d22;--blood2:#6f0715;--redglow:rgba(178,13,34,.28);--ink:#08070a;--panel:rgba(15,13,17,.94);--panel2:#141116;--line:rgba(211,193,198,.15);--text:#f2edf0;--muted:#a49aa1;--gold:#c8a6a9;--green:#8fe0a6}
+*{box-sizing:border-box;margin:0;padding:0}
+html{min-height:100%;background:#050406}
+body{min-height:100vh;background:radial-gradient(ellipse at 50% 0%,#2b090f 0%,#10080d 35%,#050406 72%);color:var(--text);font-family:Inter,Arial,sans-serif;display:flex;align-items:center;justify-content:center;overflow-x:hidden;padding:26px 14px}
+body:before{content:"";position:fixed;inset:0;pointer-events:none;background:linear-gradient(115deg,transparent 0 35%,rgba(126,7,24,.08) 35.1% 35.4%,transparent 35.5%),linear-gradient(rgba(255,255,255,.018) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.018) 1px,transparent 1px);background-size:auto,38px 38px,38px 38px;mask-image:linear-gradient(to bottom,black,transparent 95%)}
+body:after{content:"";position:fixed;inset:0;pointer-events:none;box-shadow:inset 0 0 160px #000;opacity:.9}
+.screen{width:min(100%,900px);border:1px solid rgba(204,45,65,.32);background:linear-gradient(145deg,rgba(19,15,20,.97),rgba(7,6,9,.98));padding:clamp(22px,4vw,42px);box-shadow:0 24px 90px #000b,0 0 40px rgba(117,5,22,.12),inset 0 1px rgba(255,255,255,.04);position:relative;z-index:2;animation:fadeIn .45s ease;isolation:isolate}
+.screen:before{content:"";position:absolute;top:0;left:0;width:90px;height:2px;background:var(--blood);box-shadow:0 0 18px var(--blood);z-index:-1}
+.hidden,[hidden]{display:none!important}
+.screen:not(.hidden){display:block}
+body>.screen{width:min(100% - 28px,900px);margin:auto}
+#authNotice{border:1px solid #78303c;background:#1b0a10;padding:12px;margin:12px 0 16px;color:#ffd0d7;white-space:pre-wrap;overflow-wrap:anywhere}
+#authNotice:empty{display:none}
+#opening{text-align:center;min-height:420px;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.note-symbol{font-family:Georgia,serif;font-size:clamp(65px,9vw,92px);color:#f3e9ec;text-shadow:0 0 8px #fff8,0 0 35px #a50a23,0 0 75px #6b0617;margin-bottom:8px;animation:omen 3s ease-in-out infinite}
+.opening-title,.title,.modal-title{font-family:Cinzel,Georgia,serif;font-weight:700}
+.opening-title{font-size:clamp(28px,5vw,48px);letter-spacing:clamp(4px,1vw,11px);margin-bottom:10px;text-shadow:0 0 24px #7d091b88}
+.opening-sub,.subtitle{color:#a18d96;letter-spacing:clamp(2px,.55vw,5px);font-family:"Share Tech Mono",monospace;font-size:11px}
+.opening-sub{margin-bottom:42px}
+.loading{width:min(100%,440px);height:3px;background:#25151b;overflow:hidden;margin-bottom:18px}
+.loading-bar{height:100%;background:linear-gradient(90deg,#530513,#ef334f,#f5c3ca);box-shadow:0 0 14px #d01939;animation:load 3s forwards}
+.boot-text{font-family:"Share Tech Mono",monospace;color:#a18d96;font-size:12px;line-height:2}
+.red{color:#ff5368}.ok{color:var(--green)}
+.title{font-size:clamp(25px,4vw,36px);letter-spacing:clamp(3px,.7vw,8px);margin-bottom:8px;text-shadow:0 0 22px #8e102633}
+.subtitle{margin-bottom:28px}
+button{width:100%;padding:14px 16px;background:linear-gradient(135deg,#171116,#0b090c);color:#f5edf0;border:1px solid #4b3039;cursor:pointer;letter-spacing:1.5px;font-family:Inter,sans-serif;font-size:12px;font-weight:700;transition:transform .18s,border-color .18s,background .18s,box-shadow .18s;margin-top:8px;border-radius:4px}
+button:hover{border-color:#d12b46;background:linear-gradient(135deg,#35101a,#160b10);box-shadow:0 0 22px rgba(178,13,34,.18);transform:translateY(-1px)}
+button:active{transform:translateY(0)}
+button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible{outline:2px solid #e33c55;outline-offset:2px}
+.red-button{border-color:#922034;background:linear-gradient(135deg,#5c0b1b,#260911)}
+.red-button:hover{background:linear-gradient(135deg,#97152b,#450a17);border-color:#ed5269;color:#fff}
+input,textarea,select{width:100%;padding:14px;background:#0b090d;border:1px solid #3d3037;color:#f5edf0;outline:none;margin:9px 0 15px;border-radius:4px;font:inherit;font-size:13px}
+input:focus,textarea:focus,select:focus{border-color:#b91e38;box-shadow:0 0 0 3px rgba(178,13,34,.12)}
+label,.field-label{display:block;color:#b3a2aa;font-family:"Share Tech Mono",monospace;font-size:11px;letter-spacing:1.5px;margin-top:12px}
+.choice{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.choice button{min-height:112px;font-family:Cinzel,Georgia,serif;font-size:14px;letter-spacing:2px;border-color:#5a2935}
+.choice-icon{display:block;font-size:29px;margin-bottom:12px;color:#e43a54;text-shadow:0 0 20px #b20d2266}
+.welcome{color:#d4c7cc;font-family:"Share Tech Mono",monospace;margin:18px 0 26px;padding:16px 18px;border-left:3px solid var(--blood);background:linear-gradient(90deg,#390b16a8,#110b10);line-height:1.7;font-size:12px}
+.modules{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.module{position:relative;min-height:126px;padding:22px 12px;border:1px solid #38242c;background:linear-gradient(145deg,#171117,#0b090c);color:#d8cbd1;text-align:center;cursor:pointer;transition:.22s;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:8px;font-family:Cinzel,Georgia,serif;font-size:12px;letter-spacing:1.8px;overflow:hidden}
+.module:before{content:"";position:absolute;left:0;top:0;width:2px;height:0;background:#e32643;transition:height .22s}
+.module:after{content:"";position:absolute;inset:auto -25% -55% -25%;height:80%;background:radial-gradient(ellipse,#9b102322,transparent 65%);pointer-events:none}
+.module:hover{border-color:#a7273b;color:#fff;transform:translateY(-3px);box-shadow:0 10px 26px #0008,0 0 20px #8b0b201f}
+.module:hover:before{height:100%}
+.icon{display:block;font-size:29px;filter:drop-shadow(0 0 8px #bb1b3540)}
+.santa{margin-top:25px;padding:20px;border:1px solid #4b252f;border-left:3px solid #b20d22;background:linear-gradient(120deg,#1b0d14,#0b090c)}
+.santa strong{font-family:"Share Tech Mono",monospace;letter-spacing:1.5px;color:#f3dce2}
+.santa p{margin-top:10px;color:#b8aab1;line-height:1.7;font-size:13px}
+.role{display:inline-flex;align-items:center;padding:7px 11px;border:1px solid #51323c;color:#d2b9c2;font-family:"Share Tech Mono",monospace;font-size:11px;letter-spacing:1px;margin-bottom:4px;border-radius:3px;background:#170d12}
+.admin{color:#ff9aa8;border-color:#a72138;background:#310b15}
+.modal{position:fixed;inset:0;background:rgba(2,1,3,.88);backdrop-filter:blur(9px);display:flex;align-items:center;justify-content:center;padding:clamp(10px,3vw,26px);z-index:10;overflow-y:auto}
+.modal-box{width:100%;max-width:760px;max-height:min(90vh,900px);overflow-y:auto;overscroll-behavior:contain;background:linear-gradient(145deg,#171118,#09080b);border:1px solid #763040;padding:clamp(18px,3vw,30px);box-shadow:0 25px 100px #000,0 0 40px #8e0c201e;animation:modalIn .22s ease;position:relative}
+.modal-title{font-size:clamp(21px,3vw,28px);letter-spacing:2px;margin-bottom:15px;color:#f6e7eb}
+.modal-text{color:#b7a8af;line-height:1.7;font-size:13px;margin-bottom:20px}
+.modal-box>.close{position:sticky;bottom:0;margin-top:20px;background:#250b12;border-color:#742234;box-shadow:0 -12px 18px #09080b}
+.chat-box{height:330px;max-height:45vh;overflow-y:auto;background:#08070a;border:1px solid #34232b;padding:14px;margin-bottom:15px;font-family:Inter,sans-serif;border-radius:4px}
+.chat-message{margin-bottom:12px;line-height:1.55;padding:10px 12px;border:1px solid #2d2228;background:#120e13;border-radius:5px;overflow-wrap:anywhere}
+.chat-message strong{color:#f1d8df}.chat-message small{display:block;color:#76656d;font-size:10px;margin-top:5px}
+.chat-user{color:#f4e7ec;border-color:#612435;background:#241019;margin-left:10%}
+.chat-santa{color:#ded1e8;border-color:#453451;background:#17111f;margin-right:10%}
+.footer{margin-top:25px;display:flex;justify-content:space-between;align-items:center;gap:12px;color:#8b7b83;font-family:"Share Tech Mono",monospace;font-size:10px;letter-spacing:1px}
+.logout{width:auto;padding:9px 15px;margin:0;font-size:10px;border-color:#6c2636}
+.panel{border:1px solid #3a2730;background:linear-gradient(145deg,#130f14,#0b090c);padding:16px;margin:13px 0;border-radius:5px}
+.panel h3{font-size:13px;letter-spacing:1.5px;margin-bottom:10px;color:#f0dfe4;font-family:Cinzel,Georgia,serif}
+.row-actions{display:flex;gap:8px;flex-wrap:wrap}
+.row-actions button{width:auto;flex:1;min-width:120px;letter-spacing:1px;padding:10px}
+.item{border:1px solid #35242b;padding:13px;margin:8px 0;background:#100d11;overflow-wrap:anywhere;border-radius:4px}
+.item small{display:block;color:#8b7b83;margin-top:5px}
+.item button{letter-spacing:1px;padding:8px;margin-top:8px}
+.status-line{font-family:"Share Tech Mono",monospace;font-size:12px;color:#b6a6ad;white-space:pre-wrap;line-height:1.7;margin:10px 0}
+.birthday-reveal{padding:16px;margin:0 0 18px;border:1px solid #a62a42;background:linear-gradient(135deg,#330b16,#17080d);color:#ffc4ce;text-align:center;letter-spacing:1px}
+.progress{height:5px;background:#302027;margin:10px 0}.progress span{display:block;height:100%;background:linear-gradient(90deg,#69091a,#ee304e);width:0}
+.memory-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px;margin:14px 0}
+.memory-card{min-height:74px;padding:8px;background:linear-gradient(145deg,#20151c,#0d0a0e);border:1px solid #56303b;font-size:25px;letter-spacing:0;border-radius:5px}
+.memory-card:disabled{opacity:1;color:#fff;background:#3b101c;border-color:#b72a45}
+.profile-line{display:flex;align-items:center;gap:9px;flex-wrap:wrap}.presence-dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:#777;box-shadow:0 0 8px #7775}.presence-dot.online{background:#8fe0a6;box-shadow:0 0 10px #8fe0a688}.server-tag{display:inline-block;padding:4px 7px;border:1px solid #56303b;border-radius:3px;color:#e5c6cf;font:10px "Share Tech Mono",monospace;letter-spacing:1px;margin-left:6px}.muted-copy{color:#9c8b93;font-size:12px;line-height:1.6;margin:8px 0}
+@keyframes load{from{width:0}to{width:100%}}
+@keyframes fadeIn{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+@keyframes modalIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+@keyframes omen{0%,100%{filter:drop-shadow(0 0 3px #b20d2244);transform:translateY(0)}50%{filter:drop-shadow(0 0 18px #b20d2288);transform:translateY(-2px)}}
+@media(min-width:760px){.modules{grid-template-columns:repeat(4,minmax(0,1fr))}.screen:has(.modules){max-width:1040px}}
+@media(max-width:600px){body{padding:10px 8px;align-items:flex-start}.screen{padding:24px 17px;margin:8px 0}.choice{grid-template-columns:1fr 1fr;gap:9px}.choice button{min-height:95px;padding:10px 6px;font-size:11px}.modules{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.module{min-height:100px;padding:14px 6px;font-size:10px;letter-spacing:1px}.icon{font-size:24px}.modal{padding:8px;align-items:center}.modal-box{max-height:94vh;padding:17px 13px}.chat-box{height:280px;max-height:42vh}.row-actions{flex-direction:column}.row-actions button{width:100%}.memory-card{min-height:55px;padding:4px}.footer{align-items:flex-start;flex-direction:column}.logout{width:100%}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation-duration:.01ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important;transition:none!important}}
+#toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);max-width:min(92vw,520px);padding:12px 18px;background:#250b12;border:1px solid #a72138;color:#ffd0d7;font-size:13px;line-height:1.5;z-index:30;box-shadow:0 10px 40px #000;border-radius:4px}
+.module:focus-visible{outline:2px solid #e33c55}
+
+/* ---- visual pass ---- */
+.item .server-tag{display:inline-block;margin:12px 8px 4px 0}
+.modal-head{position:sticky;top:calc(-1*clamp(18px,3vw,30px));z-index:3;display:flex;align-items:flex-start;justify-content:space-between;gap:12px;background:#171118;margin:calc(-1*clamp(18px,3vw,30px)) calc(-1*clamp(18px,3vw,30px)) 16px;padding:clamp(18px,3vw,30px) clamp(18px,3vw,30px) 12px;border-bottom:1px solid #2c1d24}
+.modal-head .modal-title{margin:0;color:#f6e7eb}
+.modal-x{flex:none;width:40px;height:40px;padding:0;margin:0;letter-spacing:0;font-size:15px;line-height:1;background:#250b12;border:1px solid #742234}
+.modal-x:hover{background:#4a1220;border-color:var(--accent,#c0314b)}
+.modal-box>.close{position:static;box-shadow:none;margin-top:22px}
+.modal-box{border-top:3px solid var(--accent,#763040)}
+.panel h3{padding-left:10px;border-left:2px solid var(--accent,#b91e38)}
+.module:hover{border-color:var(--accent,#a7273b);box-shadow:0 10px 26px #0008,0 0 22px color-mix(in srgb,var(--accent,#8b0b20) 22%,transparent)}
+.module:before{background:var(--accent,#e32643)}
+.module .icon{filter:saturate(.65) sepia(.2)}
+.module-wide{grid-column:span 2}
+.chat-message button{display:inline-block;width:auto;padding:5px 11px;margin:8px 8px 0 0;font-size:10px;letter-spacing:1px}
+.chat-user{border-color:#7a2335;background:linear-gradient(145deg,#2a0f17,#160b10)}
+
+/* BOSS SYSTEM // immersive game command deck */
+:root{--blood:#c20f30;--blood2:#790b20;--line:rgba(220,188,199,.16);--panel:#0c0a0f;--gold:#c9a36a}
+.modal-box{max-width:1120px;background:radial-gradient(ellipse at 80% 0%,#2a0b16 0%,transparent 40%),linear-gradient(145deg,#111016,#08070a 65%);border-color:#53202e}
+#modalTitle{letter-spacing:3px;text-shadow:0 0 22px #b20d2233}
+#modalText{max-width:850px}
+.game-deck{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin:18px 0}
+.game-hero{grid-column:1/-1;position:relative;overflow:hidden;min-height:180px;padding:clamp(20px,4vw,34px);border:1px solid #762239;background:linear-gradient(100deg,rgba(8,7,10,.98),rgba(37,8,18,.88)),repeating-linear-gradient(135deg,transparent 0 18px,rgba(190,18,48,.05) 18px 19px);display:flex;flex-direction:column;justify-content:center}
+.game-hero:after{content:'B';position:absolute;right:3%;top:-45%;font:800 clamp(180px,30vw,320px) Cinzel,serif;color:#d3193a0b;pointer-events:none}
+.game-kicker{font:11px 'Share Tech Mono',monospace;letter-spacing:3px;color:#ef526b;margin-bottom:12px}
+.game-hero h2{font:700 clamp(26px,4vw,42px) Cinzel,Georgia,serif;letter-spacing:2px;margin-bottom:10px}
+.game-hero p{max-width:620px;color:#b9aab1;line-height:1.7;font-size:13px}
+.game-tile{position:relative;text-align:left;min-height:150px;padding:20px;border:1px solid #39232c;background:linear-gradient(145deg,#171119,#0a090c);display:flex;flex-direction:column;align-items:flex-start;justify-content:space-between;gap:18px;transition:transform .18s,border-color .18s,box-shadow .18s}
+.game-tile:hover{border-color:#c32443;box-shadow:0 10px 32px #0009,0 0 25px #ad0e2a20;transform:translateY(-3px)}
+.game-tile .tile-icon{font-size:30px;filter:drop-shadow(0 0 12px #d21c3d55)}
+.game-tile strong{font:600 16px Cinzel,Georgia,serif;letter-spacing:1px}
+.game-tile small{font:10px 'Share Tech Mono',monospace;letter-spacing:1.5px;color:#e55a70}
+.game-tile p{font-size:12px;line-height:1.6;color:#a99aa2;font-weight:400;letter-spacing:0}
+.game-hud{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:12px 0}
+.game-stat{padding:12px;border:1px solid #39232c;background:#100c12}
+.game-stat small{display:block;font:10px 'Share Tech Mono',monospace;color:#a9949d;letter-spacing:1.5px;margin-bottom:6px}
+.game-stat strong{font:600 20px Cinzel,Georgia,serif;color:#f4e6eb}
+.game-stage{padding:clamp(16px,3vw,26px);border:1px solid #4c2632;background:linear-gradient(145deg,#130e14,#09080b);margin:12px 0;min-height:220px}
+.game-stage h3{font:600 20px Cinzel,Georgia,serif;letter-spacing:1px;margin-bottom:12px}
+.game-stage p{color:#c5b6bd;line-height:1.8;font-size:13px;margin:8px 0}
+.game-choice{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin-top:16px}
+.game-choice button{margin:0;min-height:58px;text-align:left;line-height:1.5;letter-spacing:.3px;padding:12px}
+.game-code{font:700 clamp(28px,6vw,48px) 'Share Tech Mono',monospace;letter-spacing:clamp(5px,1.5vw,12px);color:#ff526d;text-align:center;padding:20px;border:1px dashed #7e2c40;background:#160910;text-shadow:0 0 20px #bd1235}
+.game-achievements{display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:8px;margin:12px 0}
+.game-achievement{padding:12px;border:1px solid #38242d;background:#100d12;min-height:108px}
+.game-achievement.unlocked{border-color:#a87940;background:linear-gradient(145deg,#21170f,#100d11)}
+.game-achievement span{font-size:22px;display:block;margin-bottom:7px}
+.game-achievement strong{font-size:12px;display:block;margin-bottom:5px}
+.game-achievement small{color:#a7979f;line-height:1.5;display:block}
+.game-progress-track{height:5px;background:#302027;margin:12px 0;overflow:hidden}.game-progress-track span{height:100%;display:block;background:linear-gradient(90deg,#770b21,#f04461);transition:width .25s}
+.game-back{max-width:220px}
+@media(max-width:620px){.game-deck{grid-template-columns:1fr}.game-hero{grid-column:auto}.game-choice{grid-template-columns:1fr}.game-hud{grid-template-columns:1fr 1fr}.game-tile{min-height:125px}.modal-box{padding:14px}}
+
+
+/* Control-room dashboard refresh: a deliberate hierarchy, not generic red tiles */
+#dashboard{max-width:1180px!important;width:min(100% - 28px,1180px)!important;padding:clamp(18px,3vw,34px)!important;background:radial-gradient(ellipse at 92% 0%,rgba(132,10,32,.2),transparent 36%),linear-gradient(145deg,rgba(16,13,19,.98),rgba(6,5,8,.99));border-color:#51202e}
+#dashboard>.title{display:flex;align-items:center;gap:14px;font-size:clamp(24px,3.8vw,38px);margin-bottom:6px}
+#dashboard>.title:before{content:'◈';font-size:24px;color:#df2948;text-shadow:0 0 18px #b20d2266}
+#dashboard>.subtitle{display:flex;align-items:center;gap:9px;margin-bottom:20px}
+#dashboard>.subtitle:before{content:'';display:inline-block;width:7px;height:7px;border-radius:50%;background:#75d99b;box-shadow:0 0 12px #75d99b}
+#dashboard .welcome{position:relative;overflow:hidden;border:1px solid #43212c;border-left:3px solid #bf1734;padding:20px 22px;background:linear-gradient(105deg,#270c16,#100b10 65%,#0b090c);font-size:13px}
+#dashboard .welcome:after{content:'CLASSIFIED ACCESS // BOSS SYSTEM';display:block;margin-top:12px;color:#a17c89;font:10px 'Share Tech Mono',monospace;letter-spacing:2px}
+#dashboard .modules{grid-template-columns:repeat(3,minmax(0,1fr));gap:13px}
+#dashboard .module{min-height:145px;align-items:flex-start;text-align:left;padding:19px 18px;border-color:#33232b;background:linear-gradient(145deg,#171219,#0b090d 76%);font-size:13px;letter-spacing:1.8px}
+#dashboard .module .icon{font-size:27px;margin-bottom:7px}
+#dashboard .module:after{inset:auto -30% -70% 15%;height:130%;background:radial-gradient(ellipse,rgba(178,13,34,.16),transparent 65%)}
+#dashboard .module:focus-visible{outline:2px solid #ed3a58;outline-offset:3px}
+#dashboard .footer{padding-top:14px;border-top:1px solid #291a21}
+@media(max-width:760px){#dashboard .modules{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:420px){#dashboard .modules{grid-template-columns:1fr}#dashboard .module{min-height:105px}}
+
+</style>
+</head>
+
+<body>
+
+
+<!-- ======================================
+     OPENING ANIMATION
+====================================== -->
+
+<div class="screen" id="opening">
+
+  <div class="note-symbol">☠</div>
+
+  <div class="opening-title">
+    BOSS SYSTEM
+  </div>
+
+  <div class="opening-sub">
+    THE DIGITAL NOTEBOOK
+  </div>
+
+  <div class="loading">
+    <div class="loading-bar"></div>
+  </div>
+
+  <div class="boot-text" id="bootText">
+    INITIALIZING...
+  </div>
+
+</div>
+
+
+<!-- ======================================
+     LOGIN / SIGNUP CHOICE
+====================================== -->
+
+<div class="screen hidden" id="access">
+
+  <div class="title">
+    ACCESS
+  </div>
+
+  <div class="subtitle">
+    IDENTIFICATION REQUIRED
+  </div>
+
+  <div class="choice">
+
+    <button onclick="showLogin()">
+      <span class="choice-icon">◉</span>
+      LOG IN
+    </button>
+
+    <button onclick="showSignup()">
+      <span class="choice-icon">✎</span>
+      SIGN UP
+    </button>
+
+  </div>
+
+</div>
+
+
+<!-- ======================================
+     LOGIN
+====================================== -->
+
+<div class="screen hidden" id="login">
+
+  <div class="title">
+    LOG IN
+  </div>
+
+  <div class="subtitle">
+    EXISTING IDENTITY
+  </div>
+
+  <div id="authNotice" class="status-line" role="status" aria-live="polite" hidden></div>
+
+  <label>
+    EMAIL ADDRESS
+  </label>
+
+  <input
+    id="loginEmail"
+    type="email"
+    placeholder="Enter your email address"
+    autocomplete="email"
+  >
+
+  <label>
+    PASSWORD
+  </label>
+
+  <input
+    id="loginPassword"
+    type="password"
+    placeholder="Enter password"
+    autocomplete="current-password"
+    onkeydown="if(event.key==='Enter')login()"
+  >
+
+  <button onclick="login()">
+    ENTER SYSTEM
+  </button>
+
+  <button onclick="resetPassword()">
+    RESET PASSWORD BY EMAIL
+  </button>
+
+  <button onclick="backToAccess()">
+    BACK
+  </button>
+
+</div>
+
+
+<!-- ======================================
+     SIGN UP
+====================================== -->
+
+<div class="screen hidden" id="signup">
+
+  <div class="title">
+    SIGN UP
+  </div>
+
+  <div class="subtitle">
+    CREATE NEW IDENTITY
+  </div>
+
+  <label>
+    EMAIL ADDRESS
+  </label>
+
+  <input
+    id="signupEmail"
+    type="email"
+    placeholder="Enter your email address"
+    autocomplete="email"
+  >
+
+  <label>
+    USERNAME
+  </label>
+
+  <input
+    id="signupUsername"
+    type="text"
+    placeholder="Choose a username"
+    autocomplete="off"
+  >
+
+  <label>
+    NICKNAME
+  </label>
+
+  <input
+    id="signupNickname"
+    type="text"
+    placeholder="Choose a nickname"
+    autocomplete="off"
+  >
+
+  <label>
+    PASSWORD
+  </label>
+
+  <input
+    id="signupPassword"
+    type="password"
+    placeholder="Create a password"
+    autocomplete="new-password"
+  >
+
+  <label>
+    CONFIRM PASSWORD
+  </label>
+
+  <input
+    id="signupConfirm"
+    type="password"
+    placeholder="Confirm password"
+    autocomplete="new-password"
+    onkeydown="if(event.key==='Enter')signup()"
+  >
+
+  <button onclick="signup()">
+    CREATE ACCOUNT
+  </button>
+
+  <button onclick="backToAccess()">
+    BACK
+  </button>
+
+</div>
+
+
+<!-- ======================================
+     DASHBOARD
+====================================== -->
+
+<div class="screen hidden" id="dashboard">
+
+  <div class="title">
+    CONTROL PANEL
+  </div>
+
+  <div class="subtitle">
+    SYSTEM ONLINE
+  </div>
+
+  <div id="roleBadge" class="role">
+    USER ACCESS
+  </div>
+
+  <div class="welcome" id="welcomeText"></div>
+
+  <div id="birthdayReveal" class="birthday-reveal hidden">🎂 BOSS MAYSI PROTOCOL: BIRTHDAY MODE UNLOCKED</div>
+  <div class="modules">
+
+    <div class="module" onclick="openModule('LIBRARY')">
+      <span class="icon">📚</span>
+      LIBRARY
+    </div>
+
+    <div class="module" onclick="openModule('STORAGE')">
+      <span class="icon">💾</span>
+      STORAGE
+    </div>
+
+    <div class="module" onclick="openModule('GAMES')">
+      <span class="icon">🎮</span>
+      GAMES
+    </div>
+
+    <div class="module" onclick="openModule('RIDDLES')">
+      <span class="icon">🧠</span>
+      RIDDLES
+    </div>
+
+    <div class="module" onclick="openModule('QUIZ')">
+      <span class="icon">📝</span>
+      QUIZ
+    </div>
+
+    <div class="module" onclick="openModule('LINKS')">
+      <span class="icon">🔗</span>
+      LINKS
+    </div>
+
+    <div class="module" onclick="openModule('CHAT')">
+      <span class="icon">💬</span>
+      CHAT
+    </div>
+
+    <div class="module" onclick="openModule('SERVERS')">
+      <span class="icon">🌐</span>
+      SERVERS
+    </div>
+
+    <div class="module" onclick="openModule('PROFILES')">
+      <span class="icon">👤</span>
+      PROFILES
+    </div>
+
+    <div class="module" onclick="openModule('NOTIFICATIONS')">
+      <span class="icon">🔔</span>
+      <span id="notifLabel">NOTIFICATIONS</span>
+    </div>
+
+    <div class="module module-wide" onclick="openModule('SANTA')">
+      <span class="icon">🤖</span>
+      SANTA
+    </div>
+
+  </div>
+
+  <div class="santa">
+
+    <strong>
+      🤖 SANTA — ONLINE ●
+    </strong>
+
+    <p id="santaMessage"></p>
+
+  </div>
+
+  <div class="footer">
+
+    <span id="systemStatus">
+      SYSTEM STATUS: ONLINE
+    </span>
+
+    <button
+      class="logout"
+      onclick="logout()">
+      LOG OUT
+    </button>
+
+  </div>
+
+</div>
+
+
+<!-- ======================================
+     MODAL
+====================================== -->
+
+<div id="toast" class="hidden" role="status" aria-live="polite"></div>
+
+<div class="modal hidden" id="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle" onclick="if(event.target===this)closeModule()">
+
+  <div class="modal-box">
+
+    <div class="modal-head"><div class="modal-title" id="modalTitle"></div><button type="button" class="modal-x" onclick="closeModule()" aria-label="Close">✕</button></div>
+
+    <div class="modal-text" id="modalText"></div>
+
+    <div id="extraContent"></div>
+
+    <button
+      class="close"
+      onclick="closeModule()">
+      RETURN
+    </button>
+
+  </div>
+
+</div>
+
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-app.js";
+import {
+  getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword,
+  sendPasswordResetEmail, signOut, onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/12.4.0/firebase-auth.js";
+import {
+  getFirestore, doc, getDoc, setDoc, collection, collectionGroup, addDoc, getDocs,
+  query, orderBy, limit, onSnapshot, serverTimestamp, runTransaction,
+  updateDoc, deleteDoc, where, getCountFromServer, writeBatch
+} from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
+
+/* Firebase Web App configuration for BOSS SYSTEM. */
+const FIREBASE_CONFIG = {
+  apiKey: "AIzaSyC255XuKEt8JJKbWRjqLEqhxcOn1TXGC2U",
+  authDomain: "boss-system-ddf6c.firebaseapp.com",
+  projectId: "boss-system-ddf6c",
+  storageBucket: "boss-system-ddf6c.firebasestorage.app",
+  messagingSenderId: "67593000613",
+  appId: "1:67593000613:web:b03c162be0e1661b171f4c",
+  measurementId: "G-E6NGWHFJXH"
+};
+
+const firebaseConfigured = !Object.values(FIREBASE_CONFIG).some(v => String(v).startsWith("YOUR_"));
+let app = null, auth = null, db = null, currentUser = null, currentProfile = null;
+let chatUnsubscribe = null, reportUnsubscribe = null, transferUnsubscribe = null, presenceUnsubscribe = null, serverChatUnsub = null, notifUnsub = null;
+let activeTransfer = null, activePeer = null, activeChannel = null, receivedChunks = [], receiveMeta = null;
+let gameState = null, quizState = null;
+const $ = id => document.getElementById(id);
+let toastTimer=null;
+function notify(message){const t=$("toast");t.textContent=message;t.classList.remove("hidden");clearTimeout(toastTimer);toastTimer=setTimeout(()=>t.classList.add("hidden"),6000);}
+let heartbeat=null;
+const ONLINE_WINDOW_MS=5*60*1000;
+function isOnline(d){const t=d?.lastSeenAt?.toMillis?.();return d?.presenceStatus==="online"&&!!t&&Date.now()-t<ONLINE_WINDOW_MS;}
+const RESERVED_USERNAMES = new Set(["maysi", "santa", "bossmaysi", "boss_maysi", "boss-maysi"]);
+const MAX_TRANSFER_BYTES = 25 * 1024 * 1024;
+const CHUNK_SIZE = 16 * 1024;
+
+let authObserverBusy = false, signupInProgress = false;
+if (firebaseConfigured) {
+  app = initializeApp(FIREBASE_CONFIG);
+  auth = getAuth(app);
+  db = getFirestore(app);
+  onAuthStateChanged(auth, async user => {
+    currentUser = user;
+    if (!user) {
+      currentProfile = null;
+      authObserverBusy = false;
+      return;
+    }
+    if (signupInProgress || authObserverBusy) return;
+    authObserverBusy = true;
+    try {
+      const snap = await getDoc(doc(db, "users", user.uid));
+      if (!snap.exists()) {
+        currentProfile = null;
+        hideAllScreens();
+        $("login").classList.remove("hidden");
+        setAuthNotice("Firebase accepted the email/password, but this account has no users/" + user.uid + " profile document. Do not create another account. In Firestore, open the users collection and make sure the document ID is this exact UID; it needs uid, username, nickname, usernameLower and role fields. BOSS/SANTA roles must be assigned only by you in Firebase Console.");
+        await signOut(auth);
+        return;
+      }
+      const data = snap.data();
+      if (data.uid && data.uid !== user.uid) throw new Error("Profile UID does not match the signed-in account. Check the users document ID in Firestore.");
+      if (!["BOSS", "SANTA", "USER"].includes(data.role)) throw new Error("This account has an invalid role value. Use BOSS, SANTA, or USER in the Firestore profile.");
+      currentProfile = { uid:user.uid, ...data };
+      enterDashboard(currentProfile);
+      startPresence();
+      setAuthNotice("");
+    } catch (err) {
+      currentProfile = null;
+      hideAllScreens();
+      $("login").classList.remove("hidden");
+      setAuthNotice("Signed-in profile could not be loaded. " + (err?.code || err?.message || "Check Firestore rules and the users/{UID} document."));
+      console.error("BOSS SYSTEM auth/profile error", err);
+    } finally {
+      authObserverBusy = false;
+    }
+  });
+} else {
+  console.warn("Firebase is not configured. Fill FIREBASE_CONFIG in index.html first.");
+}
+
+const bootLines = ["CONNECTING TO PRIVATE NETWORK...","SCANNING ACCESS POINT...","LOADING DIGITAL NOTEBOOK...","CHECKING SECURITY...","SANTA CORE: ONLINE","BOSS PROTOCOL: READY","ACCESS TERMINAL: READY"];
+let bootIndex = 0;
+function bootAnimation(){
+  const target = $("bootText");
+  const interval = setInterval(() => {
+    if (bootIndex >= bootLines.length) {
+      clearInterval(interval);
+      setTimeout(() => { $("opening").classList.add("hidden"); const other=[...document.querySelectorAll(".screen")].some(s=>s.id!=="opening"&&!s.classList.contains("hidden")); if(!other)$("access").classList.remove("hidden"); }, 350);
+      return;
+    }
+    target.textContent = bootLines[bootIndex++];
+  }, 300);
+}
+window.addEventListener("load", bootAnimation);
+function hideAllScreens(){document.querySelectorAll(".screen").forEach(el=>el.classList.add("hidden"));}
+function showLogin(){hideAllScreens();$("login").classList.remove("hidden");setAuthNotice("");}
+function showSignup(){hideAllScreens();$("signup").classList.remove("hidden");setAuthNotice("");}
+function backToAccess(){hideAllScreens();$("access").classList.remove("hidden");setAuthNotice("");}
+window.showLogin=showLogin; window.showSignup=showSignup; window.backToAccess=backToAccess;
+
+function setAuthNotice(message){
+  const box=$("authNotice");
+  if(!box)return;
+  box.textContent=message||"";
+  box.hidden=!message;
+}
+function showError(err){
+  console.error(err);
+  const code = err?.code || "";
+  const messages = {
+    "auth/email-already-in-use":"That email is already registered.",
+    "auth/invalid-email":"Please enter a valid email address.",
+    "auth/weak-password":"Use a password with at least 6 characters.",
+    "auth/invalid-credential":"Email or password is incorrect.",
+    "auth/network-request-failed":"Network problem. Check your internet connection.",
+    "permission-denied":"You do not have permission to do that.","auth/too-many-requests":"Too many attempts. Please wait a moment and try again."
+  };
+  notify(messages[code] || err?.message || "Something went wrong. Check the browser console for details.");
+}
+function requireFirebase(){if(!firebaseConfigured){notify("Firebase setup is not finished. Follow BOSS-SYSTEM-SETUP.md first.");return false;}return true;}
+function cleanUsername(value){return value.trim().toLowerCase();}
+function validUsername(value){return /^[a-zA-Z0-9_]{3,20}$/.test(value);}
+
+async function signup(){
+  if(!requireFirebase()) return;
+  setAuthNotice("");
+  const email=$("signupEmail").value.trim().toLowerCase();
+  const username=$("signupUsername").value.trim();
+  const usernameLower=cleanUsername(username);
+  const nickname=$("signupNickname").value.trim();
+  const password=$("signupPassword").value;
+  const confirm=$("signupConfirm").value;
+  if(!email||!username||!nickname||!password||!confirm){notify("All fields are required.");return;}
+  if(!validUsername(username)){notify("Username must be 3–20 characters and use only letters, numbers or underscores.");return;}
+  if(RESERVED_USERNAMES.has(usernameLower)||["boss maysi","santa"].includes(nickname.toLowerCase())){notify("That identity is reserved.");return;}
+  if(password.length<6){notify("Password must contain at least 6 characters.");return;}
+  if(password!==confirm){notify("Passwords do not match.");return;}
+  let credential=null;
+  signupInProgress=true;
+  try{
+    credential=await createUserWithEmailAndPassword(auth,email,password);
+    currentUser=credential.user;
+    const uid=credential.user.uid;
+    await runTransaction(db,async tx=>{
+      const nameRef=doc(db,"usernames",usernameLower);
+      const nameSnap=await tx.get(nameRef);
+      if(nameSnap.exists()) throw new Error("That username is already taken. Choose another.");
+      tx.set(doc(db,"users",uid),{uid,username,nickname,usernameLower,role:"USER",presenceStatus:"online",lastSeenAt:serverTimestamp(),createdAt:serverTimestamp()});
+      tx.set(nameRef,{uid,username,usernameLower,createdAt:serverTimestamp()});
+    });
+    const profileSnap=await getDoc(doc(db,"users",uid));
+    currentProfile={uid,...profileSnap.data()};
+    enterDashboard(currentProfile);
+    startPresence();
+    $("signupEmail").value=$("signupUsername").value=$("signupNickname").value=$("signupPassword").value=$("signupConfirm").value="";
+    notify("Account created! You're signed in now.");
+  }catch(err){
+    if(credential?.user){try{await credential.user.delete();}catch(_){}}
+    showError(err);
+  }finally{
+    signupInProgress=false;
+  }
+}
+async function login(){
+  if(!requireFirebase()) return;
+  const email=$("loginEmail").value.trim().toLowerCase();
+  const password=$("loginPassword").value;
+  if(!email||!password){setAuthNotice("Enter both your email address and password.");return;}
+  const btn=$("login").querySelector('button[onclick="login()"]');
+  const original=btn?.textContent;
+  if(btn){btn.disabled=true;btn.textContent="VERIFYING ACCESS…";}
+  setAuthNotice("Checking Firebase credentials…");
+  try{
+    await signInWithEmailAndPassword(auth,email,password);
+    // Profile loading and its error messages are handled by onAuthStateChanged.
+  }catch(err){
+    const messages={
+      "auth/invalid-credential":"Email or password is incorrect. Use the existing account email and password, or use Reset Password by Email.",
+      "auth/invalid-email":"That email address is not valid.",
+      "auth/too-many-requests":"Firebase temporarily blocked sign-in attempts. Wait a while, then try again.",
+      "auth/network-request-failed":"Network error. Check internet and try again.",
+      "permission-denied":"Firestore denied the profile read. The Firestore rules or users/{UID} document need checking."
+    };
+    setAuthNotice(messages[err?.code] || ((err?.code?err.code+": ":"")+(err?.message||"Login failed.")));
+  }finally{
+    if(btn){btn.disabled=false;btn.textContent=original||"ENTER SYSTEM";}
+  }
+}
+async function resetPassword(){
+  if(!requireFirebase())return;
+  const email=($("loginEmail").value||"").trim().toLowerCase();
+  if(!email){notify("Enter your email address in the login box first.");return;}
+  try{await sendPasswordResetEmail(auth,email);notify("If the account exists, a password-reset email has been sent.");}
+  catch(err){showError(err);}
+}
+function cancelPendingOffer(){if(db&&activeTransfer?.role==="sender"&&activeTransfer.docId)updateDoc(doc(db,"transfers",activeTransfer.docId),{status:"cancelled"}).catch(()=>{});}
+async function setOwnPresence(status){
+  if(!db||!currentUser)return;
+  try{await updateDoc(doc(db,"users",currentUser.uid),{presenceStatus:status,lastSeenAt:serverTimestamp()});}catch(err){console.warn("Presence update failed",err);}
+}
+function startPresence(){
+  if(!db||!currentUser)return;
+  setOwnPresence("online");
+  clearInterval(heartbeat);
+  heartbeat=setInterval(()=>{if(document.visibilityState==="visible")setOwnPresence("online");},120000);
+  if(presenceUnsubscribe)presenceUnsubscribe();
+  presenceUnsubscribe=onSnapshot(doc(db,"users",currentUser.uid),snap=>{
+    if(snap.exists()&&currentProfile)currentProfile={...currentProfile,...snap.data()};
+  },err=>console.warn("Presence listener failed",err));
+}
+document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible"&&currentUser)setOwnPresence("online");});
+window.addEventListener("pagehide",()=>{
+  if(!db||!currentUser)return;
+  // Best-effort cleanup when this page is closed.
+  cancelPendingOffer();
+  updateDoc(doc(db,"users",currentUser.uid),{presenceStatus:"offline",lastSeenAt:serverTimestamp()}).catch(()=>{});
+});
+async function logout(){
+  clearInterval(heartbeat);heartbeat=null;
+  await setOwnPresence("offline");
+  if(presenceUnsubscribe)presenceUnsubscribe(); presenceUnsubscribe=null;
+  if(chatUnsubscribe)chatUnsubscribe(); if(reportUnsubscribe)reportUnsubscribe(); if(transferUnsubscribe)transferUnsubscribe();
+  chatUnsubscribe=reportUnsubscribe=transferUnsubscribe=null;if(serverChatUnsub)serverChatUnsub();serverChatUnsub=null;if(notifUnsub)notifUnsub();notifUnsub=null;santaState.riddle=null;santaState.last=null;
+  cancelPendingOffer();
+  if(activePeer)activePeer.close(); activePeer=null; activeChannel=null; activeTransfer=null;
+  if(auth)await signOut(auth);
+  hideAllScreens();$("access").classList.remove("hidden");
+}
+window.signup=signup;window.login=login;window.resetPassword=resetPassword;window.logout=logout;
+
+function enterDashboard(profile){
+  if(!profile || !currentUser || profile.uid!==currentUser.uid){setAuthNotice("Dashboard blocked: signed-in Firebase user and profile UID do not match.");return;}
+  currentProfile=profile;
+  $("loginPassword").value="";
+  hideAllScreens();$("dashboard").classList.remove("hidden");
+  $("welcomeText").textContent=`IDENTITY VERIFIED — WELCOME, ${(profile.nickname||profile.username||"USER").toUpperCase()}.`;
+  const badge=$("roleBadge");
+  const role=profile.role||"USER";
+  badge.textContent=role==="BOSS"?"◆ BOSS MAYSI — HIGHEST AUTHORITY":role==="SANTA"?"◆ SANTA — SYSTEM CONTROLLER":"USER ACCESS";
+  badge.classList.toggle("admin",role==="BOSS"||role==="SANTA");
+  $("santaMessage").textContent=role==="BOSS"?"BOSS MAYSI recognized. Highest authority verified. SANTA Core is standing by.":role==="SANTA"?"SANTA Core online. Use /help to view available commands.":`Welcome, ${profile.nickname||profile.username}. Keep it clever, not chaotic. 🤖`;
+  const now=new Date();
+  $("birthdayReveal").classList.toggle("hidden",!(now.getMonth()===10&&now.getDate()===17));
+  listenForTransfers();
+  checkBirthdays();
+  listenNotifications();
+}
+
+function el(tag,attrs={},text=""){
+  const node=document.createElement(tag);
+  for(const [key,value] of Object.entries(attrs)){if(key==="class")node.className=value;else if(key.startsWith("on")&&typeof value==="function")node.addEventListener(key.slice(2),value);else if(value!==undefined&&value!==null)node.setAttribute(key,String(value));}
+  if(text!=="")node.textContent=text;
+  return node;
+}
+function clearExtra(){const extra=$("extraContent");extra.replaceChildren();return extra;}
+function panel(parent,title){const p=el("section",{class:"panel"});p.append(el("h3",{},title));parent.append(p);return p;}
+function field(parent,labelText,tag="input",attrs={}){const wrap=el("div");wrap.append(el("label",{class:"field-label"},labelText));const input=el(tag,attrs);wrap.append(input);parent.append(wrap);return input;}
+function action(parent,label,fn,cls=""){const b=el("button",{type:"button",class:cls},label);b.addEventListener("click",fn);parent.append(b);return b;}
+function item(parent,title,detail=""){const box=el("div",{class:"item"});box.append(el("strong",{},title));if(detail)box.append(el("small",{},detail));parent.append(box);return box;}
+function addBirthday(box,d){if(d.birthday)box.append(el("p",{class:"muted-copy"},"🎂 Birthday: "+d.birthday));}
+async function checkBirthdays(){
+  try{
+    const md=d=>String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
+    const now=new Date(),tmr=new Date(now.getTime()+864e5),key="bossBdaySeen:"+currentUser.uid+":"+now.toDateString();
+    if(localStorage.getItem(key))return;
+    const who=async day=>(await getDocs(query(collection(db,"users"),where("birthday","==",md(day)),limit(10)))).docs.map(d=>d.data()).filter(u=>u.uid!==currentUser.uid);
+    const msgs=[];
+    if(currentProfile.birthday===md(now))msgs.push(`Happy Birthday, ${currentProfile.nickname||currentProfile.username}! 🎂 Wishing you an amazing year.`);
+    for(const u of await who(now))msgs.push(`Today is ${u.nickname||u.username}'s birthday! 🎂 Send your wishes.`);
+    for(const u of await who(tmr))msgs.push(`Tomorrow is ${u.nickname||u.username}'s birthday! 🎂 Don't forget to send your wishes.`);
+    if(msgs.length){$("santaMessage").textContent=msgs.join(" ");notify(msgs[0]);}
+    localStorage.setItem(key,"1");
+  }catch(e){console.warn("Birthday check failed",e);}
+}
+function fmtDate(value){try{const d=value?.toDate?value.toDate():new Date(value);return isNaN(d)?"":d.toLocaleString();}catch(_){return "";}}
+
+async function openModule(module){
+  if(!currentUser||!currentProfile){notify("Please log in first.");return;}
+  if(!firebaseConfigured){notify("Finish Firebase setup first.");return;}
+  $("modalTitle").textContent=module;$("modal").style.setProperty("--accent",ACCENTS[module]||"#763040");
+  $("modalText").textContent="Loading module…";
+  const extra=clearExtra();$("modal").classList.remove("hidden");
+  try{
+    if(module==="LIBRARY")await renderLibrary(extra);
+    else if(module==="STORAGE")await renderStorage(extra);
+    else if(module==="GAMES")renderGames(extra);
+    else if(module==="RIDDLES")renderRiddles(extra);
+    else if(module==="QUIZ")renderQuiz(extra);
+    else if(module==="LINKS")await renderLinks(extra);
+    else if(module==="CHAT")renderChat(extra);
+    else if(module==="SERVERS")await renderServers(extra);
+    else if(module==="PROFILES")await renderProfiles(extra);
+    else if(module==="SANTA")renderSanta(extra);
+    else if(module==="NOTIFICATIONS")await renderNotifications(extra);
+  }catch(err){$("modalText").textContent="Module error: "+(err.message||"unknown error");showError(err);}
+}
+window.openModule=openModule;
+
+async function renderLibrary(root){
+  $("modalText").textContent="Your notes are saved to your signed-in account in Firestore. File attachments stay local unless you transfer them.";
+  const form=panel(root,"CREATE NOTE");const title=field(form,"NOTE TITLE","input",{type:"text",placeholder:"Note title",maxlength:"100"});const body=field(form,"NOTE CONTENT","textarea",{rows:"4",placeholder:"Write your note…",maxlength:"10000"});
+  action(form,"SAVE NOTE",async()=>{if(!title.value.trim()||!body.value.trim()){notify("Enter a title and note.");return;}await addDoc(collection(db,"users",currentUser.uid,"notes"),{title:title.value.trim(),body:body.value.trim(),createdAt:serverTimestamp(),updatedAt:serverTimestamp()});title.value=body.value="";await renderLibrary(root);},"red-button");
+  const list=panel(root,"SAVED NOTES");const snap=await getDocs(query(collection(db,"users",currentUser.uid,"notes"),orderBy("createdAt","desc"),limit(50)));
+  if(snap.empty)list.append(el("p",{class:"status-line"},"No notes yet."));
+  snap.forEach(d=>{const n=d.data();const box=item(list,n.title||"Untitled",fmtDate(n.createdAt));box.append(el("p",{},n.body||""));action(box,"DELETE",async()=>{if(confirm("Delete this note?")){await deleteDoc(d.ref);await renderLibrary(root);}},"red-button");});
+}
+
+const DB_NAME="bossSystemLocalFilesV1";
+function openLocalDB(){return new Promise((resolve,reject)=>{const req=indexedDB.open(DB_NAME,1);req.onupgradeneeded=()=>{const d=req.result;if(!d.objectStoreNames.contains("files"))d.createObjectStore("files",{keyPath:"id"});};req.onsuccess=()=>resolve(req.result);req.onerror=()=>reject(req.error);});}
+async function fileDB(method,value){const d=await openLocalDB();return new Promise((resolve,reject)=>{const tx=d.transaction("files",method==="getAll"?"readonly":"readwrite");const store=tx.objectStore("files");let req;if(method==="put")req=store.put(value);else if(method==="delete")req=store.delete(value);else req=store.getAll();req.onsuccess=()=>resolve(req.result);req.onerror=()=>reject(req.error);tx.oncomplete=()=>d.close();tx.onerror=()=>reject(tx.error);});}
+async function renderStorage(root){
+  $("modalText").textContent="Files stay on this browser/device using IndexedDB. They do not sync automatically and can be lost if site data is cleared. Direct transfer is limited to 25 MB and requires both users online.";
+  const form=panel(root,"SAVE FILE ON THIS DEVICE");const picker=field(form,"CHOOSE A FILE","input",{type:"file"});action(form,"SAVE LOCALLY",async()=>{const f=picker.files?.[0];if(!f){notify("Choose a file first.");return;}try{await fileDB("put",{id:crypto.randomUUID(),name:f.name,type:f.type,size:f.size,lastModified:f.lastModified,blob:f,createdAt:Date.now()});picker.value="";await renderStorage(root);}catch(e){notify("Browser storage failed or is full: "+e.message);}},"red-button");
+  const sendPanel=panel(root,"DIRECT SEND — NO CLOUD FILE UPLOAD");const recipient=field(sendPanel,"RECIPIENT USERNAME","input",{type:"text",placeholder:"Enter exact username"});const sendPicker=field(sendPanel,"FILE TO SEND","input",{type:"file"});action(sendPanel,"START TRANSFER",()=>startTransfer(recipient.value.trim().toLowerCase(),sendPicker.files?.[0]),"red-button");const transferStatus=el("div",{id:"transferStatus",class:"status-line"},"Transfer status: ready");sendPanel.append(transferStatus);
+  const inbox=panel(root,"INCOMING TRANSFERS");const inboxList=el("div",{id:"transferInbox"});inbox.append(inboxList);loadIncomingTransfers(inboxList);
+  const list=panel(root,"FILES SAVED ON THIS DEVICE");const files=await fileDB("getAll");if(!files.length)list.append(el("p",{class:"status-line"},"No local files saved yet."));
+  for(const f of files.sort((a,b)=>b.createdAt-a.createdAt)){const box=item(list,f.name,`${(f.size/1024/1024).toFixed(2)} MB • ${fmtDate(f.createdAt)}`);const actions=el("div",{class:"row-actions"});action(actions,"DOWNLOAD",()=>downloadBlob(f.blob,f.name));action(actions,"DELETE",async()=>{if(confirm("Delete this local file?")){await fileDB("delete",f.id);await renderStorage(root);}},"red-button");box.append(actions);}
+}
+function downloadBlob(blob,name){const url=URL.createObjectURL(blob);const a=el("a",{href:url,download:name});document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);}
+function setTransferStatus(text){const n=$("transferStatus");if(n)n.textContent=text;}
+async function waitIceComplete(pc){if(pc.iceGatheringState==="complete")return;await new Promise((resolve,reject)=>{const timer=setTimeout(()=>reject(new Error("Connection setup timed out. Try again on a different network.")),12000);pc.addEventListener("icegatheringstatechange",()=>{if(pc.iceGatheringState==="complete"){clearTimeout(timer);resolve();}});});}
+function createPeer(){return new RTCPeerConnection({iceServers:[{urls:"stun:stun.l.google.com:19302"}]});}
+async function findRecipient(username){const snap=await getDoc(doc(db,"usernames",username));return snap.exists()?snap.data().uid:null;}
+async function startTransfer(username,file){
+  if(!username||!file){notify("Enter the recipient username and choose a file.");return;}
+  if(file.size<=0){notify("This file is empty.");return;}
+  if(file.size>MAX_TRANSFER_BYTES){notify("This prototype supports files up to 25 MB.");return;}
+  if(username===currentProfile.usernameLower){notify("You cannot send a file to yourself.");return;}
+  try{
+    const recipientUid=await findRecipient(username);if(!recipientUid){notify("Username not found. They must have a BOSS SYSTEM account.");return;}
+    activePeer=createPeer();activeTransfer={file,recipientUid,role:"sender"};activeChannel=activePeer.createDataChannel("boss-file",{ordered:true});
+    activeChannel.binaryType="arraybuffer";
+    activeChannel.onopen=async()=>{try{setTransferStatus("Connected. Sending file…");activeChannel.send(JSON.stringify({type:"meta",name:file.name,size:file.size,mime:file.type||"application/octet-stream"}));const buf=await file.arrayBuffer();for(let offset=0;offset<buf.byteLength;offset+=CHUNK_SIZE){if(!activeChannel||activeChannel.readyState!=="open")throw new Error("Transfer connection closed.");while(activeChannel.bufferedAmount>1024*1024)await new Promise(r=>setTimeout(r,80));activeChannel.send(buf.slice(offset,Math.min(offset+CHUNK_SIZE,buf.byteLength)));setTransferStatus(`Sending… ${Math.min(100,Math.round((offset+CHUNK_SIZE)/buf.byteLength*100))}%`);}activeChannel.send(JSON.stringify({type:"done"}));setTransferStatus("File sent. Wait for receiver confirmation.");}catch(e){setTransferStatus("Transfer failed: "+e.message);}};
+    activeChannel.onerror=()=>setTransferStatus("Transfer channel error.");
+    const offer=await activePeer.createOffer();await activePeer.setLocalDescription(offer);await waitIceComplete(activePeer);
+    const ref=await addDoc(collection(db,"transfers"),{senderUid:currentUser.uid,senderName:currentProfile.nickname||currentProfile.username,recipientUid,status:"offered",offer:activePeer.localDescription.sdp,fileName:file.name,fileSize:file.size,createdAt:serverTimestamp()});activeTransfer.docId=ref.id;setTransferStatus("Offer sent. Ask recipient to open STORAGE and accept the transfer.");
+    const cancelBtn=action($("transferStatus").parentElement,"CANCEL OFFER",async()=>{try{await updateDoc(ref,{status:"cancelled"});if(activePeer)activePeer.close();cancelBtn.remove();setTransferStatus("Offer cancelled.");}catch(e){showError(e);}});
+    const unsub=onSnapshot(ref,async snap=>{const data=snap.data();if(!data)return;if(data.status==="accepted"&&data.answer&&activePeer?.signalingState==="have-local-offer"){try{await activePeer.setRemoteDescription({type:"answer",sdp:data.answer});}catch(e){setTransferStatus("Could not establish connection: "+e.message);}}if(data.status==="rejected"||data.status==="cancelled"){setTransferStatus("Transfer was rejected or cancelled.");unsub();}});
+  }catch(err){setTransferStatus("Transfer failed: "+err.message);showError(err);}
+}
+async function loadIncomingTransfers(root){
+  root.replaceChildren();try{const snap=await getDocs(query(collection(db,"transfers"),where("recipientUid","==",currentUser.uid),limit(20)));const fresh=t=>{const ms=t.createdAt?.toMillis?.();return !ms||Date.now()-ms<15*60*1000;};const docs=snap.docs.filter(d=>d.data().status==="offered"&&fresh(d.data()));if(!docs.length){root.append(el("p",{class:"status-line"},"No pending transfers."));return;}for(const d of docs){const t=d.data();const box=item(root,t.fileName||"Incoming file",`${t.senderName||"A user"} • ${((t.fileSize||0)/1024/1024).toFixed(2)} MB`);action(box,"ACCEPT",()=>acceptTransfer(d.ref,t),"red-button");action(box,"REJECT",()=>updateDoc(d.ref,{status:"rejected"}));}}catch(err){root.append(el("p",{class:"status-line"},"Could not load transfers: "+err.message));}
+}
+async function listenForTransfers(){if(transferUnsubscribe)transferUnsubscribe();if(!db||!currentUser)return;transferUnsubscribe=onSnapshot(query(collection(db,"transfers"),where("recipientUid","==",currentUser.uid),limit(20)),snap=>{const pending=snap.docs.filter(d=>d.data().status==="offered");if(pending.length&&$("modalTitle").textContent==="STORAGE"){const root=$("transferInbox");if(root)loadIncomingTransfers(root);} });}
+async function acceptTransfer(ref,t){
+  try{
+    activePeer=createPeer();activeTransfer={role:"receiver",ref,fileName:t.fileName,fileSize:t.fileSize};receivedChunks=[];receiveMeta=null;
+    activePeer.ondatachannel=event=>{activeChannel=event.channel;activeChannel.binaryType="arraybuffer";activeChannel.onmessage=async ev=>{if(typeof ev.data==="string"){let m;try{m=JSON.parse(ev.data);}catch(_){return;}if(m.type==="meta"){receiveMeta=m;receivedChunks=[];setTransferStatus(`Receiving ${m.name}…`);}else if(m.type==="done"){const blob=new Blob(receivedChunks,{type:receiveMeta?.mime||"application/octet-stream"});downloadBlob(blob,receiveMeta?.name||t.fileName||"received-file");setTransferStatus("Transfer complete. Check your downloads; save it to My Storage if you want to keep it in the browser.");receivedChunks=[];}}else{receivedChunks.push(ev.data);const total=receivedChunks.reduce((n,c)=>n+(c.byteLength||c.size||0),0);setTransferStatus(`Receiving… ${Math.min(100,Math.round(total/Math.max(1,t.fileSize)*100))}%`);}};};
+    await activePeer.setRemoteDescription({type:"offer",sdp:t.offer});const answer=await activePeer.createAnswer();await activePeer.setLocalDescription(answer);await waitIceComplete(activePeer);await updateDoc(ref,{answer:activePeer.localDescription.sdp,status:"accepted"});setTransferStatus("Accepted. Connecting to sender…");closeModule();openModule("STORAGE");
+  }catch(err){notify("Could not accept transfer: "+err.message);}
+}
+
+async function renderLinks(root){
+  $("modalText").textContent="Save useful URLs to your account. Only the URL and label are stored in Firestore.";
+  const form=panel(root,"SAVE A LINK");const label=field(form,"LINK NAME","input",{type:"text",placeholder:"YouTube, Instagram, study site…",maxlength:"100"});const url=field(form,"URL","input",{type:"url",placeholder:"https://example.com"});action(form,"SAVE LINK",async()=>{let parsed;try{parsed=new URL(url.value.trim());}catch(_){notify("Enter a valid full URL.");return;}if(!["https:","http:"].includes(parsed.protocol)){notify("Only http and https links are allowed.");return;}await addDoc(collection(db,"users",currentUser.uid,"links"),{label:label.value.trim()||parsed.hostname,url:parsed.href,createdAt:serverTimestamp()});label.value=url.value="";await renderLinks(root);},"red-button");
+  const list=panel(root,"YOUR LINKS");const snap=await getDocs(query(collection(db,"users",currentUser.uid,"links"),orderBy("createdAt","desc"),limit(100)));if(snap.empty)list.append(el("p",{class:"status-line"},"No links saved."));snap.forEach(d=>{const v=d.data();const box=item(list,v.label||v.url,v.url);const a=el("a",{href:v.url,target:"_blank",rel:"noopener noreferrer"},"OPEN LINK");a.style.color="#ff9999";box.append(a);action(box,"DELETE",async()=>{if(confirm("Delete this link?")){await deleteDoc(d.ref);await renderLinks(root);}},"red-button");});
+}
+
+function renderGames(root){
+  root.replaceChildren();
+  $('modalText').textContent='SOLO OPERATIONS // Case files, cipher runs, memory trials and tactical quizzes. Every run scales up as you improve.';
+  const shell=panel(root,'BOSS GAME DIVISION');
+  const hero=el('section',{class:'game-hero'});hero.append(el('div',{class:'game-kicker'},'CLASSIFIED // SOLO CAMPAIGN'),el('h2',{},'ENTER THE SYSTEM'),el('p',{},'Four different ways to test your instincts. Crack cases, decode signals under pressure, build memory combos and survive escalating quiz rounds. Earn XP, set records and unlock your operator profile.'));shell.append(hero);
+  const deck=el('div',{class:'game-deck'});shell.append(deck);
+  const addTile=(icon,title,tag,desc,fn)=>{const b=el('button',{class:'game-tile',type:'button'});const top=el('div');top.append(el('span',{class:'tile-icon'},icon),el('small',{},tag));b.append(top,el('strong',{},title),el('p',{},desc));b.addEventListener('click',fn);deck.append(b);};
+  addTile('🕵️','CASE FILES','INVESTIGATION // 01','Interrogate suspects, inspect evidence and identify the culprit. Cases grow less obvious each chapter.',()=>startCaseFiles(shell));
+  addTile('⌁','CIPHER RUN','TIMED // 02','Decode a scrambled signal before the timer expires. New rounds add longer codes and less time.',()=>startCipherRun(shell));
+  addTile('◈','MEMORY PROTOCOL','FOCUS // 03','Match symbols, build a streak and climb through larger boards with fewer mistakes.',()=>startMemoryProtocol(shell));
+  addTile('⚡','QUIZ ARENA','KNOWLEDGE // 04','Choose a category and take a five-question speed round with combos and rising difficulty.',()=>renderQuiz(shell));
+  addTile('⌛','RIDDLE CHAMBER','LOGIC // 05','Solve a timed riddle. Hints are available, but clean solutions score more.',()=>renderRiddles(shell));
+  addTile('♜','OPERATOR RECORD','PROFILE // 06','Review your XP, leaderboard position and achievement collection.',()=>{shell.replaceChildren();renderProgress(shell);renderAchievements(shell);action(shell,'BACK TO GAME DIVISION',()=>renderGames(root));});
+  renderProgress(shell);renderAchievements(shell);
+}
+function gameStage(root,kicker,title,copy){const stage=el('section',{class:'game-stage'});stage.append(el('div',{class:'game-kicker'},kicker),el('h3',{},title),el('p',{},copy));root.append(stage);return stage;}
+function gameHUD(root,items){const hud=el('div',{class:'game-hud'});items.forEach(([k,v])=>{const box=el('div',{class:'game-stat'});box.append(el('small',{},k),el('strong',{},String(v)));hud.append(box);});root.append(hud);return hud;}
+function startCaseFiles(root){
+ root.replaceChildren();const stage=gameStage(root,'CASE FILE // 001','THE RED LEDGER','A secure archive was accessed at 21:40. Three operators had access. One statement conflicts with the terminal logs. Gather the facts before making your accusation.');
+ const evidence=el('div',{class:'panel'});evidence.append(el('h3',{},'EVIDENCE BOARD'),el('p',{class:'status-line'},'• Access terminal: 21:40\n• Security camera: hallway empty from 21:35–21:50\n• The archive door can only be opened with an operator badge.'));stage.append(evidence);
+ const cases=[{name:'Mira — Analyst',line:'I left the building at 21:30. I never went back upstairs.',clue:'Her badge was recorded at the archive door at 21:40.',correct:false},{name:'Noah — Technician',line:'I was in the server room fixing a power alert.',clue:'The server-room maintenance log confirms his session from 21:32 to 21:48.',correct:false},{name:'Riven — Security',line:'I watched the hallway continuously from 21:30 to 22:00.',clue:'The camera feed was empty, but security-console access was disabled at 21:38.',correct:true}];
+ const q=el('div',{class:'game-stage'});q.append(el('div',{class:'game-kicker'},'PHASE 1 // INTERROGATION'),el('h3',{},'Who is hiding something?'),el('p',{},'Inspect each suspect statement, then choose who you want to investigate.'));const choices=el('div',{class:'game-choice'});q.append(choices);stage.append(q);
+ cases.forEach((c,i)=>{const b=el('button',{type:'button'},c.name+' — REVIEW STATEMENT');b.addEventListener('click',()=>{q.replaceChildren(el('div',{class:'game-kicker'},'SUSPECT DOSSIER'),el('h3',{},c.name),el('p',{},'“'+c.line+'”'),el('p',{},'Evidence check: '+c.clue));const row=el('div',{class:'game-choice'});const accuse=el('button',{type:'button',class:'red-button'},'ACCUSE THIS SUSPECT');accuse.addEventListener('click',()=>finishCase(root,c.correct,c.name));const back=el('button',{type:'button'},'REVIEW OTHER SUSPECTS');back.addEventListener('click',()=>startCaseFiles(root));row.append(accuse,back);q.append(row);});choices.append(b);});
+ action(root,'ABANDON CASE',()=>renderGames(root));
+}
+function finishCase(root,correct,name){root.replaceChildren();const stage=gameStage(root,'CASE REPORT // FINAL DECISION',correct?'CASE CLOSED':'CASE MISSED',correct?'Your timeline matches the terminal evidence. Riven had console access when the feed was disabled, and his claim of continuous observation cannot be true.':'That accusation does not fit all the evidence. Recheck the badge log and the disabled camera feed, then try the case again.');if(correct){stage.append(el('div',{class:'game-code'},'CASE +250 XP'));saveScore('CASE FILES: THE RED LEDGER',250);unlockGameBadge('case_closed');}action(root,correct?'NEXT CASE — REPLAY':'REOPEN CASE',()=>startCaseFiles(root),'red-button');action(root,'GAME DIVISION',()=>renderGames(root));}
+function startCipherRun(root){
+ root.replaceChildren();let round=1,score=0,streak=0,seconds=18,timer=null,answer='',done=false;const stage=gameStage(root,'SIGNAL INTERCEPT // TIMED','CIPHER RUN','Decode the letters by shifting each one backward through the alphabet. Example: D -> C. Each cleared round adds another character and reduces the time.');const hud=gameHUD(stage,[['ROUND',round],['SIGNAL SCORE',score],['TIME',seconds]]);const code=el('div',{class:'game-code'});stage.append(code);const feedback=el('p',{class:'status-line'});stage.append(feedback);const input=field(stage,'DECODED SIGNAL','input',{type:'text',placeholder:'Type the decoded word…',autocomplete:'off'});const btn=el('button',{type:'button',class:'red-button'},'DECODE SIGNAL');stage.append(btn);
+ const makeRound=()=>{done=false;seconds=Math.max(7,18-(round-1)*2);answer=Array.from({length:Math.min(3+round,8)},()=>String.fromCharCode(65+Math.floor(Math.random()*26))).join('');const shift=1+Math.min(round,4);code.textContent=answer.split('').map(c=>String.fromCharCode(65+(c.charCodeAt(0)-65+shift)%26)).join('');input.value='';input.disabled=false;btn.disabled=false;feedback.textContent=`Signal shifted forward by ${shift}. Decode it before the countdown ends.`;hud.children[0].querySelector('strong').textContent=round;hud.children[1].querySelector('strong').textContent=score;hud.children[2].querySelector('strong').textContent=seconds;clearInterval(timer);timer=setInterval(()=>{seconds--;hud.children[2].querySelector('strong').textContent=seconds;if(seconds<=0)finish(false);},1000);};
+ const finish=win=>{if(done)return;done=true;clearInterval(timer);input.disabled=true;btn.disabled=true;if(win){const pts=round*40+seconds*3;score+=pts;streak++;feedback.textContent=`Signal decoded. +${pts} points. Next signal will be harder.`;hud.children[1].querySelector('strong').textContent=score;saveScore('CIPHER RUN',pts);if(round>=5)unlockGameBadge('cipher_veteran');action(stage,'NEXT SIGNAL',()=>{round++;makeRound();stage.querySelectorAll('button').forEach(b=>{if(b.textContent==='NEXT SIGNAL')b.remove();});});}else{feedback.textContent=`Signal lost. The decoded signal was ${answer}. Final score: ${score}.`;saveScore('CIPHER RUN TOTAL',score);action(stage,'RETRY CIPHER RUN',()=>startCipherRun(root),'red-button');action(stage,'GAME DIVISION',()=>renderGames(root));}};
+ btn.addEventListener('click',()=>finish(input.value.trim().toUpperCase()===answer));input.addEventListener('keydown',e=>{if(e.key==='Enter')btn.click();});makeRound();action(root,'QUIT RUN',()=>{clearInterval(timer);renderGames(root);});
+}
+function startMemoryProtocol(root){
+ root.replaceChildren();let level=1,moves=0,matched=0,first=null,locked=false,points=0,deck=[],found=new Set();const stage=gameStage(root,'COGNITIVE TRIAL // PROGRESSIVE','MEMORY PROTOCOL','Memorise the symbols and match the pairs. Each level adds more pairs. Fast, accurate runs earn more points.');const hud=gameHUD(stage,[['LEVEL',level],['MOVES',moves],['SCORE',points]]);const status=el('p',{class:'status-line'});stage.append(status);const grid=el('div',{class:'memory-grid'});stage.append(grid);
+ const begin=()=>{const symbols=['☾','♜','✦','♠','♦','⌘','☠','♟','⚑','✧','♧','☼'];const pairs=Math.min(4+level,10);deck=shuffle(symbols.slice(0,pairs).concat(symbols.slice(0,pairs)));moves=0;matched=0;first=null;locked=false;found=new Set();grid.style.gridTemplateColumns=`repeat(${pairs<=5?4:5},minmax(0,1fr))`;grid.replaceChildren();status.textContent=`Level ${level}: match ${pairs} pairs.`;hud.children[0].querySelector('strong').textContent=level;hud.children[1].querySelector('strong').textContent=moves;hud.children[2].querySelector('strong').textContent=points;deck.forEach((sym,i)=>{const b=el('button',{class:'memory-card',type:'button'},'?');b.addEventListener('click',()=>{if(locked||found.has(i)||b.textContent!=='?')return;b.textContent=sym;if(first===null){first=i;return;}moves++;const prev=first;first=null;if(deck[prev]===sym){found.add(prev);found.add(i);grid.children[prev].disabled=true;b.disabled=true;matched++;points+=Math.max(5,30-Math.floor(moves/2));status.textContent=`Pair found! ${matched}/${pairs} pairs.`;}else{locked=true;setTimeout(()=>{grid.children[prev].textContent='?';b.textContent='?';locked=false;},600);}hud.children[1].querySelector('strong').textContent=moves;hud.children[2].querySelector('strong').textContent=points;if(matched===pairs){status.textContent=`LEVEL ${level} CLEARED. Total score: ${points}.`;saveScore('MEMORY PROTOCOL',points);if(level>=3)unlockGameBadge('memory_operative');action(stage,'NEXT LEVEL',()=>{level++;begin();});}});grid.append(b);});};begin();action(root,'QUIT TRIAL',()=>renderGames(root));
+}
+const GAME_BADGES=[{id:'case_closed',icon:'🕵️',name:'Case Closed',desc:'Solve the Red Ledger investigation.'},{id:'cipher_veteran',icon:'⌁',name:'Cipher Veteran',desc:'Reach round five in Cipher Run.'},{id:'memory_operative',icon:'◈',name:'Memory Operative',desc:'Clear three levels of Memory Protocol.'},{id:'quiz_survivor',icon:'⚡',name:'Quiz Survivor',desc:'Complete a full quiz round.'},{id:'riddle_solver',icon:'⌛',name:'Riddle Breaker',desc:'Solve a riddle before time runs out.'}];
+function gameBadgeKey(){return 'bossGameBadges:'+(currentUser?.uid||'guest');}
+function getGameBadges(){try{return JSON.parse(localStorage.getItem(gameBadgeKey())||'[]');}catch(_){return [];}}
+function unlockGameBadge(id){const b=GAME_BADGES.find(x=>x.id===id);if(!b)return;const got=getGameBadges();if(got.includes(id))return;got.push(id);try{localStorage.setItem(gameBadgeKey(),JSON.stringify(got));}catch(_){}notify('Achievement unlocked: '+b.name+' '+b.icon);}
+function renderAchievements(root){const p=panel(root,'ACHIEVEMENTS // OPERATOR INSIGNIA');const grid=el('div',{class:'game-achievements'});const owned=new Set(getGameBadges());GAME_BADGES.forEach(b=>{const card=el('div',{class:'game-achievement'+(owned.has(b.id)?' unlocked':'')});card.append(el('span',{},b.icon),el('strong',{},b.name),el('small',{},owned.has(b.id)?'UNLOCKED • '+b.desc:'LOCKED • '+b.desc));grid.append(card);});p.append(grid);}
+
+async function saveScore(game,score){try{await addDoc(collection(db,"scores"),{uid:currentUser.uid,username:currentProfile.username,nickname:currentProfile.nickname,game,score,createdAt:serverTimestamp()});}catch(e){console.warn("Score not saved",e);}awardXp(Math.floor(score/10));}
+
+/*GAMES-START*/
+const levelOf=xp=>Math.floor(Math.sqrt((xp||0)/100))+1;
+const shuffle=a=>{a=[...a];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;};
+const dayKey=(offsetDays=0)=>{const d=new Date(Date.now()+offsetDays*864e5);return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;};
+let quizTimer=null;
+
+// XP is awarded through one function. Firestore rules cap each write (+100 XP, 10 s apart) but a browser game can never be fully tamper-proof.
+async function awardXp(gain,extra={}){
+  gain=Math.max(0,Math.min(100,Math.round(gain)));
+  if(!gain)return;
+  const ref=doc(db,"progress",currentUser.uid);
+  try{
+    const s=await getDoc(ref);const old=s.exists()?s.data():{xp:0,streak:0,lastDaily:""};
+    const data={uid:currentUser.uid,username:currentProfile.username,nickname:currentProfile.nickname||"",xp:(old.xp||0)+gain,streak:extra.streak??old.streak??0,lastDaily:extra.lastDaily??old.lastDaily??"",updatedAt:serverTimestamp()};
+    await setDoc(ref,data,{merge:true});notify(`+${gain} XP • Level ${levelOf(data.xp)}`);
+  }catch(e){notify(e.code==="permission-denied"?"XP not saved: you're going too fast. Try again in a few seconds.":"XP could not be saved.");}
+}
+async function renderProgress(root){
+  const p=panel(root,"PROGRESS & LEADERBOARD");
+  try{
+    const me=await getDoc(doc(db,"progress",currentUser.uid));const d=me.exists()?me.data():{xp:0,streak:0};
+    const lv=levelOf(d.xp),lo=(lv-1)**2*100,hi=lv**2*100;
+    p.append(el("p",{class:"status-line"},`Level ${lv} • ${d.xp||0} XP • Daily streak: ${d.streak||0}`));
+    const bar=el("div",{class:"progress"}),fill=el("span");fill.style.width=Math.round(((d.xp||0)-lo)/(hi-lo)*100)+"%";bar.append(fill);p.append(bar);
+    const top=await getDocs(query(collection(db,"progress"),orderBy("xp","desc"),limit(10)));
+    if(top.empty)p.append(el("p",{class:"status-line"},"No ranked players yet. Be the first."));
+    top.docs.forEach((x,i)=>{const v=x.data();item(p,`#${i+1} ${v.nickname||v.username}`,`Level ${levelOf(v.xp)} • ${v.xp} XP`);});
+  }catch(e){p.append(el("p",{class:"status-line"},"Could not load progress: "+e.message));}
+}
+
+const riddles=[
+  {d:"easy",k:"keyboard",q:"I have keys but no locks, space but no room. What am I?",a:"A keyboard",hint:"You use me to type.",hint2:"I have a space bar."},
+  {d:"medium",k:"footsteps",q:"The more you take, the more you leave behind. What are they?",a:"Footsteps",hint:"Think about walking.",hint2:"They show where you've been."},
+  {d:"easy",k:"clock",q:"What has a face and two hands but no arms or legs?",a:"A clock",hint:"It helps you know the time.",hint2:"It ticks."},
+  {d:"medium",k:"towel",q:"What gets wetter the more it dries?",a:"A towel",hint:"You use it after washing.",hint2:"It hangs in the bathroom."},
+  {d:"easy",k:"comb",q:"What has many teeth but cannot bite?",a:"A comb",hint:"It helps with hair.",hint2:"You pull it through your hair."},
+  {d:"medium",k:"stamp",q:"What can travel around the world while staying in a corner?",a:"A stamp",hint:"You put me on letters.",hint2:"I'm sticky on one side."},
+  {d:"hard",k:"echo",q:"I speak without a mouth and hear without ears. What am I?",a:"An echo",hint:"Mountains and caves know me.",hint2:"I repeat what you shout."},
+  {d:"easy",k:"egg",q:"What has to be broken before you can use it?",a:"An egg",hint:"Think breakfast.",hint2:"It has a yolk."},
+  {d:"hard",k:"darkness",q:"The more of me there is, the less you see. What am I?",a:"Darkness",hint:"A light switch beats me.",hint2:"Night brings me."},
+  {d:"medium",k:"age",q:"What goes up but never comes down?",a:"Your age",hint:"Birthdays add to it.",hint2:"It counts years."}
+];
+function startRiddle(area,r,daily){
+ area.replaceChildren();let hints=0,solved=false,left=30,timer=null;area.append(el('p',{},`[${r.d.toUpperCase()}${daily?' • DAILY':' • TIMED CHALLENGE'}] ${r.q}`));const track=el('div',{class:'game-progress-track'}),fill=el('span');fill.style.width='100%';track.append(fill);area.append(track);const clock=el('p',{class:'status-line'},'TIME LEFT: 30s');area.append(clock);const ans=field(area,'YOUR ANSWER','input',{type:'text',maxlength:'60'});const out=el('p',{class:'status-line'});area.append(out);const base=daily?25+Math.min(daily.streak,7)*5:{easy:10,medium:20,hard:30}[r.d];const stop=()=>{clearInterval(timer);timer=null;ans.disabled=true;};const check=()=>{if(solved)return;const g=norm(ans.value);if(!g)return;if(g===norm(r.a)||g.includes(r.k)){solved=true;stop();const gain=Math.max(5,base-hints*5+Math.floor(left/5));out.textContent=`Correct! +${gain} XP. Answer: ${r.a}`;awardXp(gain,daily?{streak:daily.streak,lastDaily:daily.today}:{});unlockGameBadge('riddle_solver');}else out.textContent='Not quite. Re-read the clue and try again.';};ans.addEventListener('keydown',e=>{if(e.key==='Enter')check();});action(area,'SUBMIT ANSWER',check,'red-button');action(area,'HINT',()=>{if(solved)return;hints=Math.min(2,hints+1);out.textContent=`HINT ${hints}: ${hints===1?r.hint:r.hint2}`;});timer=setInterval(()=>{if(solved){stop();return;}left--;clock.textContent=`TIME LEFT: ${left}s`;fill.style.width=(left/30*100)+'%';if(left<=0){stop();out.textContent=`Time expired. Answer: ${r.a}. Start another challenge to try again.`;}},1000);
+}
+async function startDaily(area){
+  const today=dayKey();let old={streak:0,lastDaily:""};
+  try{const s=await getDoc(doc(db,"progress",currentUser.uid));if(s.exists())old=s.data();}catch(_){}
+  if(old.lastDaily===today){area.replaceChildren(el("p",{class:"status-line"},`You already solved today's riddle. Streak: ${old.streak}. Come back tomorrow! 🌙`));return;}
+  const streak=old.lastDaily===dayKey(-1)?(old.streak||0)+1:1;
+  const r=riddles[Math.floor(new Date(today).getTime()/864e5)%riddles.length];
+  startRiddle(area,r,{streak,today});
+}
+function renderRiddles(root){
+  root.replaceChildren();
+  $("modalText").textContent="Pick a difficulty, or take today's daily riddle to build a streak. Each hint costs 5 XP.";
+  const p=panel(root,"RIDDLE CHAMBER");
+  const level=field(p,"DIFFICULTY","select");["easy","medium","hard"].forEach(x=>level.append(el("option",{value:x},x.toUpperCase())));
+  const area=el("div");p.append(area);
+  action(p,"NEW RIDDLE",()=>startRiddle(area,pick("rid"+level.value,riddles.filter(r=>r.d===level.value)),null),"red-button");
+  action(p,"DAILY RIDDLE",()=>startDaily(area));
+}
+
+const quizzes={
+  Anime:[
+    {q:"In Naruto, what village is Naruto from?",o:["Hidden Leaf","Hidden Sand","Hidden Mist"],a:0,e:"Naruto is from Konohagakure, the Hidden Leaf Village."},
+    {q:"Which anime features the Survey Corps?",o:["One Piece","Attack on Titan","Bleach"],a:1,e:"The Survey Corps explores beyond the walls in Attack on Titan."},
+    {q:"Who is the captain of the Straw Hat Pirates?",o:["Luffy","Zoro","Sanji"],a:0,e:"Monkey D. Luffy leads the crew."},
+    {q:"In Death Note, what is Light's Shinigami called?",o:["Ryuk","Rem","Sidoh"],a:0,e:"Ryuk drops the notebook into the human world."},
+    {q:"Which Ghibli film follows a girl working in a bathhouse?",o:["Spirited Away","My Neighbor Totoro","Princess Mononoke"],a:0,e:"Chihiro works at the bathhouse in Spirited Away."},
+    {q:"What race is Goku?",o:["Saiyan","Namekian","Human"],a:0,e:"Goku is a Saiyan raised on Earth."}],
+  Study:[
+    {q:"What is 7 × 8?",o:["54","56","64"],a:1,e:"7 × 8 = 56."},
+    {q:"What is the chemical symbol for oxygen?",o:["O","Ox","Og"],a:0,e:"Oxygen's symbol is O."},
+    {q:"What is the capital of France?",o:["Paris","Lyon","Marseille"],a:0,e:"Paris is the capital."},
+    {q:"Which is the largest planet in our solar system?",o:["Jupiter","Saturn","Earth"],a:0,e:"Jupiter is the largest planet."},
+    {q:"What is the square root of 144?",o:["12","14","16"],a:0,e:"12 × 12 = 144."},
+    {q:"What is H2O commonly known as?",o:["Water","Salt","Hydrogen peroxide"],a:0,e:"H2O is two hydrogen atoms and one oxygen atom: water."}],
+  Gaming:[
+    {q:"Which company makes the PlayStation?",o:["Nintendo","Sony","Valve"],a:1,e:"PlayStation is made by Sony."},
+    {q:"In Minecraft, which tool is commonly used to mine stone?",o:["Pickaxe","Fishing rod","Hoe"],a:0,e:"The pickaxe is the stone-mining tool."},
+    {q:"What is Mario's brother called?",o:["Luigi","Wario","Yoshi"],a:0,e:"Luigi is Mario's younger brother."},
+    {q:"Which game features Creepers?",o:["Minecraft","Roblox","Fortnite"],a:0,e:"Creepers are the green exploding mobs in Minecraft."},
+    {q:"Who is the hero of The Legend of Zelda?",o:["Link","Zelda","Ganon"],a:0,e:"You play as Link, not Zelda."},
+    {q:"Which company makes the Xbox?",o:["Microsoft","Sega","Sony"],a:0,e:"Xbox is made by Microsoft."}]
+};
+function renderQuiz(root){
+  root.replaceChildren();clearInterval(quizTimer);
+  $("modalText").textContent="Randomised 5-question rounds, 15 seconds each. Right answers in a row build a combo (up to x3).";
+  const p=panel(root,"QUIZ ARENA");
+  const select=field(p,"CATEGORY","select");Object.keys(quizzes).forEach(x=>select.append(el("option",{value:x},x)));
+  const area=el("div");p.append(area);
+  action(p,"START QUIZ",()=>startQuiz(select.value,area),"red-button");
+}
+function startQuiz(category,area){
+  const qs=shuffle(quizzes[category]).slice(0,5).map(q=>{const right=q.o[q.a],o=shuffle(q.o);return {...q,o,a:o.indexOf(right)};});
+  quizState={i:0,score:0,combo:0,category,questions:qs};showQuizQuestion(area);
+}
+function showQuizQuestion(area){
+  clearInterval(quizTimer);area.replaceChildren();
+  const S=quizState;
+  if(S.i>=S.questions.length){const total=Math.min(1000,S.score);area.append(el("p",{class:"status-line"},`Round complete! Score: ${total}`));saveScore("QUIZ: "+S.category,total);unlockGameBadge("quiz_survivor");action(area,"PLAY AGAIN",()=>startQuiz(S.category,area),"red-button");return;}
+  const q=S.questions[S.i];let left=15,done=false;
+  const info=el("p",{class:"status-line"}),opts=el("div"),fb=el("div");
+  area.append(info,el("p",{},`${S.i+1}/${S.questions.length}. ${q.q}`),opts,fb);
+  const paint=()=>{info.textContent=`⏱ ${left}s • Next correct answer: x${Math.min(3,S.combo+1)} • Score ${S.score}`;};paint();
+  const finish=choice=>{
+    if(done)return;done=true;clearInterval(quizTimer);
+    if(choice===q.a){S.combo++;const pts=50*Math.min(3,S.combo)+left;S.score+=pts;fb.append(el("p",{class:"status-line"},`✅ Correct! +${pts}. ${q.e||""}`));}
+    else{S.combo=0;fb.append(el("p",{class:"status-line"},(choice===-1?"⏰ Time's up! ":pick("qwrong",["Oof. 😬 ","Not quite. ","Wrong, but dramatically so. "]))+`Answer: ${q.o[q.a]}. ${q.e||""}`));}
+    [...opts.children].forEach(b=>{b.disabled=true;});
+    action(fb,S.i+1>=S.questions.length?"FINISH":"NEXT QUESTION",()=>{S.i++;showQuizQuestion(area);},"red-button");
+  };
+  q.o.forEach((opt,i)=>action(opts,opt,()=>finish(i)));
+  quizTimer=setInterval(()=>{left--;paint();if(left<=0)finish(-1);},1000);
+}
+/*GAMES-END*/
+
+function renderChat(root){
+  $("modalText").textContent="Shared chat lobby. Messages are visible to signed-in users. Users can report messages; moderators can review reports. Do not post private information.";
+  const form=panel(root,"SYSTEM CHAT");const list=el("div",{class:"chat-box",id:"fireChatBox"});form.append(list);const input=field(form,"MESSAGE","input",{type:"text",placeholder:"Write a message…",maxlength:"1000"});action(form,"SEND MESSAGE",async()=>{const message=input.value.trim();if(!message)return;try{await addDoc(collection(db,"chatMessages"),{uid:currentUser.uid,username:currentProfile.username,nickname:currentProfile.nickname,text:message,createdAt:serverTimestamp()});input.value="";}catch(e){showError(e);}},"red-button");
+  if(chatUnsubscribe)chatUnsubscribe();chatUnsubscribe=onSnapshot(query(collection(db,"chatMessages"),orderBy("createdAt","desc"),limit(60)),snap=>{list.replaceChildren();snap.docs.reverse().forEach(d=>{const m=d.data();const line=el("div",{class:"chat-message"+(m.uid===currentUser.uid?" chat-user":"")});line.append(el("strong",{},(m.nickname||m.username||"USER")+": "),el("span",{},m.text||""));line.append(el("small",{},fmtDate(m.createdAt)));if(m.uid!==currentUser.uid){action(line,"REPORT",()=>reportMessage(d.id,m,null));}if(["BOSS","SANTA"].includes(currentProfile.role))action(line,"REMOVE MESSAGE",async()=>{if(confirm("Remove this message?"))await deleteDoc(d.ref);},"red-button");list.append(line);});list.scrollTop=list.scrollHeight;},err=>list.replaceChildren(el("p",{class:"status-line"},"Could not load chat: "+(err.code==="permission-denied"?"permission denied by Firestore rules.":err.message))));
+  if(["BOSS","SANTA"].includes(currentProfile.role)){const mod=panel(root,"MODERATION REPORTS");const reports=el("div");mod.append(reports);if(reportUnsubscribe)reportUnsubscribe();reportUnsubscribe=onSnapshot(query(collection(db,"reports"),where("status","==","open"),limit(30)),snap=>{reports.replaceChildren();if(snap.empty)reports.append(el("p",{class:"status-line"},"No open reports."));snap.forEach(d=>{const r=d.data();const box=item(reports,"Report: "+(r.reportedName||"user"),(r.reason||"No reason provided")+(r.messageText?" — Message: "+r.messageText:"")+(r.serverId?" (server chat)":""));action(box,"MARK REVIEWED",async()=>{try{await updateDoc(d.ref,{status:"reviewed",reviewedBy:currentUser.uid,reviewedAt:serverTimestamp()});await addDoc(collection(db,"notifications"),{recipientUid:r.reporterUid,senderUid:currentUser.uid,type:"report_reviewed",message:"Your report has been reviewed.",refId:d.id,read:false,createdAt:serverTimestamp()});}catch(e){showError(e);}});});});}
+}
+
+async function renderProfiles(root){
+  $("modalText").textContent="Signed-in users can view public profile details and presence. Do not put private information in your profile.";
+  const me=panel(root,"MY PROFILE");
+  const nick=field(me,"NICKNAME","input",{type:"text",maxlength:"30",value:currentProfile.nickname||""});
+  const bday=field(me,"BIRTHDAY (MM-DD, optional — visible to other members)","input",{type:"text",placeholder:"11-17",maxlength:"5",value:currentProfile.birthday||""});
+  action(me,"SAVE PROFILE",async()=>{
+    const n=nick.value.trim(),b=bday.value.trim();
+    if(!n||n.length>30){notify("Nickname must be 1–30 characters.");return;}
+    if(b&&!/^(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])$/.test(b)){notify("Birthday must look like 11-17 (month-day).");return;}
+    try{await updateDoc(doc(db,"users",currentUser.uid),{nickname:n,birthday:b});currentProfile={...currentProfile,nickname:n,birthday:b};notify("Profile saved.");}catch(e){showError(e);}
+  },"red-button");
+  const searchPanel=panel(root,"FIND A PROFILE");
+  const username=field(searchPanel,"EXACT USERNAME","input",{type:"text",placeholder:"Enter username",maxlength:"20"});
+  const results=el("div");searchPanel.append(results);
+  async function showProfile(uid,data){
+    const box=item(results,(data.nickname||data.username||"USER")+" (@"+(data.username||"unknown")+")",data.role||"USER");
+    const online=isOnline(data);
+    const line=el("p",{class:"status-line profile-line"});
+    line.append(el("span",{class:"presence-dot"+(online?" online":"")}),el("span",{},online?"ONLINE":"OFFLINE"));
+    if(!online&&data.lastSeenAt)line.append(el("span",{},"Last seen: "+fmtDate(data.lastSeenAt)));
+    box.append(line);addBirthday(box,data);
+  }
+  action(searchPanel,"SEARCH USER",async()=>{
+    results.replaceChildren();const key=cleanUsername(username.value);
+    if(!validUsername(key)){results.append(el("p",{class:"status-line"},"Enter a valid username (3–20 letters, numbers or underscores)."));return;}
+    try{const snap=await getDocs(query(collection(db,"users"),where("usernameLower","==",key),limit(1)));if(snap.empty){results.append(el("p",{class:"status-line"},"No profile found."));return;}const d=snap.docs[0];await showProfile(d.id,d.data());}
+    catch(err){results.append(el("p",{class:"status-line"},"Could not load profile: "+err.message));}
+  },"red-button");
+  const recent=panel(root,"RECENT PROFILES");
+  try{const snap=await getDocs(query(collection(db,"users"),orderBy("usernameLower","asc"),limit(30)));if(snap.empty)recent.append(el("p",{class:"status-line"},"No profiles available."));snap.forEach(d=>{const data=d.data();const box=item(recent,(data.nickname||data.username||"USER")+" (@"+(data.username||"unknown")+")",data.role||"USER");const online=isOnline(data);const line=el("p",{class:"status-line profile-line"});line.append(el("span",{class:"presence-dot"+(online?" online":"")}),el("span",{},online?"ONLINE":"OFFLINE"));if(!online&&data.lastSeenAt)line.append(el("span",{},"Last seen: "+fmtDate(data.lastSeenAt)));box.append(line);addBirthday(box,data);});}
+  catch(err){recent.append(el("p",{class:"status-line"},"Could not load profiles: "+err.message));}
+}
+async function renderServers(root){
+  $("modalText").textContent="Discover public servers, create your own public or private server, and manage membership. Private server data is protected by Firestore rules.";
+  const create=panel(root,"CREATE SERVER");
+  const name=field(create,"SERVER NAME","input",{type:"text",placeholder:"Choose a server name",maxlength:"50"});
+  const description=field(create,"DESCRIPTION","textarea",{rows:"3",placeholder:"What is this server for?",maxlength:"300"});
+  const visibility=field(create,"VISIBILITY","select");visibility.append(el("option",{value:"public"},"PUBLIC — anyone signed in can join"),el("option",{value:"private"},"PRIVATE — invite only"));
+  const invitesPanel=panel(root,"YOUR INVITATIONS");
+  const ownedAndJoined=panel(root,"YOUR SERVERS");
+  const searchBox=field(panel(root,"SEARCH SERVERS"),"SERVER NAME","input",{type:"text",placeholder:"Type to filter public servers",maxlength:"50"});
+  let searchTimer=null;searchBox.addEventListener("input",()=>{clearTimeout(searchTimer);searchTimer=setTimeout(()=>refresh(),300);});
+  const publicPanel=panel(root,"DISCOVER PUBLIC SERVERS");
+  async function loadInvites(){
+    invitesPanel.replaceChildren(el("h3",{},"YOUR INVITATIONS"));
+    try{
+      const s=await getDocs(query(collection(db,"serverInvites"),where("inviteeUid","==",currentUser.uid),where("status","==","pending"),limit(20)));
+      if(s.empty)invitesPanel.append(el("p",{class:"status-line"},"No pending invitations."));
+      s.forEach(d=>{const inv=d.data();const row=item(invitesPanel,"You have been invited to a private server.",inv.serverName||"Private server");
+        action(row,"ACCEPT",async()=>{try{const b=writeBatch(db);b.set(doc(db,"servers",inv.serverId,"members",currentUser.uid),{uid:currentUser.uid,username:currentProfile.username,nickname:currentProfile.nickname||"",joinedAt:serverTimestamp()});b.update(d.ref,{status:"accepted"});await b.commit();notify("Joined "+(inv.serverName||"the server")+".");await refresh();}catch(e){showError(e);}},"red-button");
+        action(row,"DECLINE",async()=>{try{await updateDoc(d.ref,{status:"declined"});await loadInvites();}catch(e){showError(e);}});
+      });
+    }catch(e){invitesPanel.append(el("p",{class:"status-line"},"Could not load invitations: "+e.message));}
+  }
+  let rv=0;
+  async function refresh(){
+    const my=++rv,stale=()=>my!==rv;
+    loadInvites();
+    ownedAndJoined.replaceChildren();ownedAndJoined.append(el("h3",{},"YOUR SERVERS"));
+    const seen=new Set();
+    try{
+      const own=await getDocs(query(collection(db,"servers"),where("ownerUid","==",currentUser.uid),limit(50)));
+      if(stale())return;for(const d of own.docs){seen.add(d.id);renderServerCard(ownedAndJoined,d.id,d.data(),true);}
+      const memberships=await getDocs(query(collectionGroup(db,"members"),where("uid","==",currentUser.uid),limit(50)));
+      if(stale())return;for(const m of memberships.docs){const parent=m.ref.parent.parent;if(!parent||seen.has(parent.id))continue;const snap=await getDoc(parent);if(stale())return;if(snap.exists()){seen.add(parent.id);renderServerCard(ownedAndJoined,parent.id,snap.data(),false);}}
+      if(!seen.size)ownedAndJoined.append(el("p",{class:"status-line"},"You have not joined any servers yet."));
+    }catch(err){ownedAndJoined.append(el("p",{class:"status-line"},"Could not load your servers: "+err.message));}
+    publicPanel.replaceChildren();publicPanel.append(el("h3",{},"DISCOVER PUBLIC SERVERS"));const term=searchBox.value.trim().toLowerCase();
+    try{const snap=await getDocs(query(collection(db,"servers"),where("visibility","==","public"),limit(50)));if(stale())return;let count=0;for(const d of snap.docs){if(term&&!(d.data().name||"").toLowerCase().includes(term))continue;const joined=await getDoc(doc(db,"servers",d.id,"members",currentUser.uid));if(stale())return;if(joined.exists()||d.data().ownerUid===currentUser.uid)continue;count++;renderServerCard(publicPanel,d.id,d.data(),false,true);}if(!count)publicPanel.append(el("p",{class:"status-line"},"No other public servers to join right now. Create one to get started."));}
+    catch(err){publicPanel.append(el("p",{class:"status-line"},"Could not load public servers: "+err.message));}
+  }
+  function renderServerCard(parent,id,data,isOwner,isDiscover=false){
+    const box=item(parent,data.name||"Untitled server",data.description||"No description provided.");
+    box.append(el("span",{class:"server-tag"},(data.visibility||"public").toUpperCase()));
+    const cnt=el("span",{class:"server-tag"},"… MEMBERS");box.append(cnt);
+    getCountFromServer(collection(db,"servers",id,"members")).then(s=>cnt.textContent=s.data().count+(s.data().count===1?" MEMBER":" MEMBERS")).catch(()=>cnt.remove());
+    if(!isDiscover)action(box,"OPEN SERVER CHAT",()=>renderServerChat(root,id,data.name),"red-button");
+    const memberPath=doc(db,"servers",id,"members",currentUser.uid);
+    if(isOwner){
+      box.append(el("p",{class:"muted-copy"},"You own this server."));
+      if(data.visibility==="private"){
+        const invite=field(box,"INVITE BY USERNAME","input",{type:"text",placeholder:"Username",maxlength:"20"});
+        const pending=el("div");
+        const loadPending=async()=>{pending.replaceChildren();try{const s=await getDocs(query(collection(db,"serverInvites"),where("ownerUid","==",currentUser.uid),where("serverId","==","id"),where("status","==","pending"),limit(20)));s.forEach(d=>{const row=item(pending,"Pending: @"+(d.data().inviteeName||"user"),"Waiting for a response");action(row,"REVOKE",async()=>{try{await updateDoc(d.ref,{status:"revoked"});await loadPending();}catch(e){showError(e);}},"red-button");});}catch(e){pending.append(el("p",{class:"status-line"},"Could not load invites: "+e.message));}};
+        action(box,"SEND INVITE",async()=>{
+          const key=cleanUsername(invite.value);if(!validUsername(key)){notify("Enter a valid username.");return;}
+          try{
+            const us=await getDoc(doc(db,"usernames",key));if(!us.exists()){notify("User not found.");return;}
+            const target=us.data();
+            if(target.uid===currentUser.uid){notify("You already own this server.");return;}
+            if((await getDoc(doc(db,"servers",id,"members",target.uid))).exists()){notify("That user is already a member.");return;}
+            const ref=doc(db,"serverInvites",id+"_"+target.uid);
+            try{await deleteDoc(ref);}catch(_){}
+            await setDoc(ref,{serverId:id,serverName:data.name,ownerUid:currentUser.uid,inviteeUid:target.uid,inviteeName:target.username,status:"pending",createdAt:serverTimestamp()});
+            try{await addDoc(collection(db,"notifications"),{recipientUid:target.uid,senderUid:currentUser.uid,type:"invite",message:"You have been invited to a private server.",refId:id,read:false,createdAt:serverTimestamp()});}catch(e){console.warn("Invite notification failed",e);}
+            invite.value="";notify("Invite sent to @"+target.username+".");await loadPending();
+          }catch(e){showError(e);}
+        },"red-button");
+        box.append(pending);loadPending();
+      }else box.append(el("p",{class:"muted-copy"},"Public server: anyone signed in can join."));
+    }
+    else if(isDiscover){action(box,"JOIN PUBLIC SERVER",async()=>{try{await setDoc(memberPath,{uid:currentUser.uid,username:currentProfile.username,nickname:currentProfile.nickname||"",joinedAt:serverTimestamp()});notify("Joined server.");await refresh();}catch(err){showError(err);}},"red-button");}
+    else {action(box,"LEAVE SERVER",async()=>{if(!confirm("Leave this server?"))return;try{await deleteDoc(memberPath);await refresh();}catch(err){showError(err);}},"red-button");}
+  }
+  action(create,"CREATE SERVER",async()=>{const serverName=name.value.trim();if(serverName.length<3){notify("Server name must contain at least 3 characters.");return;}try{const ref=await addDoc(collection(db,"servers"),{ownerUid:currentUser.uid,name:serverName,description:description.value.trim(),visibility:visibility.value,createdAt:serverTimestamp(),updatedAt:serverTimestamp()});await setDoc(doc(db,"servers",ref.id,"members",currentUser.uid),{uid:currentUser.uid,username:currentProfile.username,nickname:currentProfile.nickname||"",joinedAt:serverTimestamp()});name.value=description.value="";notify("Server created.");await refresh();}catch(err){showError(err);}},"red-button");
+  await refresh();
+}
+
+function listenNotifications(){
+  if(notifUnsub)notifUnsub();
+  notifUnsub=onSnapshot(query(collection(db,"notifications"),where("recipientUid","==",currentUser.uid),where("read","==",false),limit(50)),
+    s=>{$("notifLabel").textContent=s.size?`NOTIFICATIONS (${s.size})`:"NOTIFICATIONS";},e=>console.warn("Notification listener failed",e));
+}
+async function renderNotifications(root){
+  $("modalText").textContent="Your notifications. Only you can see them. Birthday reminders appear when you open the site and are not stored here.";
+  const redo=async()=>{root.replaceChildren();await renderNotifications(root);};
+  const head=panel(root,"INBOX");const list=el("div");head.append(list);
+  const snap=await getDocs(query(collection(db,"notifications"),where("recipientUid","==",currentUser.uid),limit(50)));
+  const docs=snap.docs.sort((a,b)=>(b.data().createdAt?.toMillis?.()||0)-(a.data().createdAt?.toMillis?.()||0));
+  if(!docs.length){list.append(el("p",{class:"status-line"},"No notifications yet."));return;}
+  const unread=docs.filter(d=>!d.data().read);
+  if(unread.length)action(head,"MARK ALL READ",async()=>{try{const b=writeBatch(db);unread.forEach(d=>b.update(d.ref,{read:true}));await b.commit();await redo();}catch(e){showError(e);}},"red-button");
+  docs.forEach(d=>{const n=d.data();const box=item(list,(n.read?"":"● ")+(n.message||"Notification"),fmtDate(n.createdAt));const row=el("div",{class:"row-actions"});
+    if(!n.read)action(row,"MARK READ",async()=>{try{await updateDoc(d.ref,{read:true});await redo();}catch(e){showError(e);}});
+    action(row,"DISMISS",async()=>{try{await deleteDoc(d.ref);await redo();}catch(e){showError(e);}},"red-button");box.append(row);});
+}
+async function reportMessage(messageId,m,serverId){
+  const reason=prompt("Why are you reporting this message? (Please be specific)");
+  if(reason===null)return;
+  if(!reason.trim()){notify("Please describe the problem to submit a report.");return;}
+  try{
+    const rep={messageId,reportedUid:m.uid,reportedName:m.nickname||m.username||"user",reporterUid:currentUser.uid,reason:reason.trim().slice(0,500),messageText:(m.text||"").slice(0,1000),status:"open",createdAt:serverTimestamp()};
+    if(serverId)rep.serverId=serverId;
+    await addDoc(collection(db,"reports"),rep);notify("Report submitted.");
+  }catch(e){showError(e);}
+}
+async function renderServerChat(root,serverId,serverName){
+  if(serverChatUnsub)serverChatUnsub();serverChatUnsub=null;
+  root.replaceChildren();
+  $("modalTitle").textContent=serverName||"SERVER";
+  $("modalText").textContent="Server chat. Only members can read or write here; this is enforced by Firestore rules, not just hidden in the interface.";
+  const back=()=>{if(serverChatUnsub)serverChatUnsub();serverChatUnsub=null;$("modalTitle").textContent="SERVERS";root.replaceChildren();renderServers(root);};
+  let canModerate=["BOSS","SANTA"].includes(currentProfile.role);
+  try{const srv=await getDoc(doc(db,"servers",serverId));if(srv.exists()&&srv.data().ownerUid===currentUser.uid)canModerate=true;}catch(_){}
+  const chat=panel(root,"SERVER CHAT");const list=el("div",{class:"chat-box"},"Loading messages…");chat.append(list);
+  const input=field(chat,"MESSAGE","input",{type:"text",placeholder:"Write a message…",maxlength:"1000"});
+  const send=async()=>{const text=input.value.trim();if(!text)return;try{await addDoc(collection(db,"servers",serverId,"messages"),{uid:currentUser.uid,username:currentProfile.username,nickname:currentProfile.nickname||"",text,createdAt:serverTimestamp()});input.value="";}catch(e){showError(e);}};
+  input.addEventListener("keydown",e=>{if(e.key==="Enter")send();});
+  action(chat,"SEND MESSAGE",send,"red-button");
+  serverChatUnsub=onSnapshot(query(collection(db,"servers",serverId,"messages"),orderBy("createdAt","desc"),limit(60)),snap=>{
+    list.replaceChildren();
+    if(snap.empty)list.append(el("p",{class:"status-line"},"No messages yet. Say hello."));
+    snap.docs.reverse().forEach(d=>{const m=d.data();const line=el("div",{class:"chat-message"+(m.uid===currentUser.uid?" chat-user":"")});line.append(el("strong",{},(m.nickname||m.username||"USER")+": "),el("span",{},m.text||""),el("small",{},fmtDate(m.createdAt)));if(m.uid!==currentUser.uid)action(line,"REPORT",()=>reportMessage(d.id,m,serverId));if(canModerate)action(line,"REMOVE MESSAGE",async()=>{if(confirm("Remove this message?"))try{await deleteDoc(d.ref);}catch(e){showError(e);}},"red-button");list.append(line);});
+    list.scrollTop=list.scrollHeight;
+  },err=>list.replaceChildren(el("p",{class:"status-line"},"Could not load messages: "+(err.code==="permission-denied"?"you are not a member of this server.":err.message))));
+  const mem=panel(root,"MEMBERS");
+  try{const s=await getDocs(query(collection(db,"servers",serverId,"members"),limit(100)));s.forEach(d=>item(mem,d.data().nickname||d.data().username||"USER","@"+(d.data().username||"unknown")));}catch(e){mem.append(el("p",{class:"status-line"},"Could not load members: "+e.message));}
+  action(root,"← BACK TO SERVERS",back);
+}
+function renderSanta(root){
+  $("modalText").textContent="SANTA CORE // I'm a rule-based assistant, not a full AI model: I understand built-in commands and topics, and I remember our chat only while this window is open. Type /about for details.";
+  const p=panel(root,"SANTA CORE");const log=el("div",{class:"chat-box",id:"santaLog"});log.append(el("p",{class:"chat-message chat-santa"},"SANTA: Core online. Ask me about BOSS SYSTEM, or type /help. 😏"));p.append(log);const input=field(p,"COMMAND","input",{type:"text",placeholder:"/help or just ask me something"});const go=()=>{runSanta(input.value,log);input.value="";};action(p,"SEND",go,"red-button");input.addEventListener("keydown",e=>{if(e.key==="Enter")go();});
+}
+/*SANTA-START*/
+const santaState={riddle:null,last:null,used:{}};
+const norm=s=>s.toLowerCase().replace(/[^a-z0-9 ]/g,"").replace(/^(a|an|the) /,"").trim();
+function pick(key,pool){let i;do{i=Math.floor(Math.random()*pool.length);}while(pool.length>1&&santaState.used[key]===i);santaState.used[key]=i;return pool[i];}
+const SANTA={
+  jokes:["I told my computer I needed a break. It said 'no problem' and went to sleep. 😴","Why do programmers prefer dark mode? Light attracts bugs. 🪲","I'd tell you a UDP joke, but you might not get it. 📡","Why was the developer sad? Because he didn't get arrays. 😔"],
+  roast:{
+    user:["You have the confidence of someone who never reads instructions. Respect. 😏","Your typing is fast. The accuracy is more of a suggestion.","You asked a bot to roast you. Bold strategy. Let's see how it plays out."],
+    boss:["BOSS MAYSI holds the highest authority in the system and still clicks 'Reset Password' like a speedrun. 👑","The BOSS can moderate a whole server but not their own snack intake. 🍟"],
+    santa:["Roast me? I'm basically a polite pile of if-statements. And honestly? Valid. 🤖","I'm rule-based, not heartless. Okay, maybe a little heartless. 🖤"]},
+  greet:["Hey NICK! 👋 What are we breaking today?","Welcome back, NICK. I kept your seat warm. 😏","NICK! Good timing. Ask me anything about BOSS SYSTEM."],
+  thanks:["Anytime. I work for free, which is fair, because I'm a pile of rules. 😌","You're welcome! Try not to break anything. 😏"],
+  right:["Correct! 🎉 Okay, you may keep your brain.","Nailed it. I'm almost impressed. 😏","Yes! Big-brain energy. Say 'more' for another."],
+  wrong:["Nope. 😬 Try again, or type /hint.","Close... no, not really. /hint exists for a reason.","Wrong, but confidently wrong. Respect. Try again."],
+  unknown:["I didn't catch that. I'm rule-based, not a mind reader. 😅 Type /help to see what I understand.","That one's beyond my wiring. Ask me about servers, invites, files, birthdays, notifications, reports or games.","No rule matches that, and I won't pretend otherwise. Try rephrasing, or type /help."]
+};
+const SANTA_TEXT={
+  help:"Commands: /help, /about, /status, /whoami, /birthday, /joke, /riddle, /hint, /giveup, /roast [boss|santa]. Moderators: /reports. Or just ask me about servers, invites, files, birthdays, notifications, reports or games.",
+  about:"I'm SANTA, a rule-based assistant. I match what you type against built-in commands and topics, and I remember this chat only while this window is open. I can't browse the web, read other people's data or reason about anything you throw at me like a real AI model. If I don't understand, I'll say so.",
+  privateServer:"Easy, Boss-in-training. 😏 Open SERVERS, fill in CREATE SERVER, choose PRIVATE, then use SEND INVITE with a username. They accept under YOUR INVITATIONS. No summoning ritual required.",
+  server:"Open SERVERS and fill in CREATE SERVER. PUBLIC servers can be joined by anyone signed in; PRIVATE ones are invite-only. Open a server you belong to with OPEN SERVER CHAT.",
+  joinServer:"In SERVERS, use SEARCH SERVERS to filter public servers, then JOIN PUBLIC SERVER. Private servers need an invite from the owner. You can leave from YOUR SERVERS.",
+  birthday:"Add your birthday as MM-DD in PROFILES → MY PROFILE (optional, visible to other members). Reminders appear when you open the site. I can't send them while the site is closed.",
+  notif:"The 🔔 NOTIFICATIONS tile shows your unread count. Open it to mark items read or dismiss them. You get one when you're invited to a private server or when a report of yours is reviewed.",
+  files:"STORAGE keeps files on this device only. DIRECT SEND needs the recipient's exact username, files up to 25 MB, and both of you online. The recipient accepts it from STORAGE, and you can cancel a pending offer.",
+  report:"Press REPORT under a message and say what's wrong. BOSS or SANTA will review it, and you'll get a notification when they do.",
+  games:"Try GAMES for Cat Memory Arena, QUIZ for categories, or say 'riddle' and I'll challenge you right here. GAMES includes solo Case Files, Cipher Run, Memory Protocol, Quiz Arena, timed riddles and achievements.",
+  login:"Use RESET PASSWORD BY EMAIL on the login screen. I can't see or reset passwords, and nobody should be able to."
+};
+const SANTA_CMDS={
+  "/help":()=>SANTA_TEXT.help,"/about":()=>SANTA_TEXT.about,
+  "/status":()=>"Frontend online. Firebase: "+(firebaseConfigured?"configured":"not configured")+". Signed in: yes.",
+  "/whoami":()=>`${currentProfile.nickname} (@${currentProfile.username}) — role ${currentProfile.role}.`,
+  "/birthday":()=>"BOSS MAYSI's birthday protocol is November 17 (browser local date). Add yours in PROFILES → MY PROFILE.",
+  "/joke":()=>santaJoke(),"/riddle":()=>santaRiddle(),
+  "/hint":()=>santaState.riddle?"Hint: "+santaState.riddle.hint:"No riddle running. Type /riddle to start one.",
+  "/giveup":()=>{if(!santaState.riddle)return "Nothing to give up on. Type /riddle.";const a=santaState.riddle.a;santaState.riddle=null;return "The answer was: "+a+". I won't tell anyone. 🤫";},
+  "/roast":arg=>santaRoast(arg==="boss"?"boss":arg==="santa"?"santa":"user"),
+  "/secret":()=>"There are a few hidden phrases in here. Greet me like a boss and see what happens. 🤫",
+  "/reports":async()=>{if(!["BOSS","SANTA"].includes(currentProfile.role))return "ACCESS DENIED. Moderator role required.";try{const snap=await getDocs(query(collection(db,"reports"),where("status","==","open"),limit(20)));return `${snap.size} open report(s). Open CHAT to review them.`;}catch(e){return "Could not load reports: "+e.message;}}
+};
+function santaJoke(){santaState.last="joke";return pick("joke",SANTA.jokes);}
+function santaRoast(who){santaState.last="roast:"+who;return pick("roast"+who,SANTA.roast[who]);}
+function santaRiddle(){const r=riddles[Math.floor(Math.random()*riddles.length)];santaState.riddle=r;santaState.last="riddle";return "Riddle time: "+r.q+"  (Type your answer, /hint, or /giveup.)";}
+const SANTA_INTENTS=[
+  [/open sesame/,()=>"🚪 The vault creaks open... it's empty. The real treasure was the friends you invited. (There is no vault.)"],
+  [/up up down down/,()=>"+30 lives. They do nothing. Enjoy the feeling. 🎮"],
+  [/i am (the )?boss|i'm (the )?boss/,()=>currentProfile.role==="BOSS"?"Confirmed by Firestore, not by your confidence. Welcome, BOSS MAYSI. 👑":"Bold claim. Firestore says you are "+currentProfile.role+". Nice try. 😏"],
+  [/who is (the )?boss/,()=>"BOSS MAYSI. Highest authority. I just do the paperwork. 📝"],
+  [/^(more|another|again|next|one more|what else)$/,()=>{const l=santaState.last||"";return l==="joke"?santaJoke():l==="riddle"?santaRiddle():l.startsWith("roast:")?santaRoast(l.slice(6)):pick("unknown",SANTA.unknown);}],
+  [/^(hi|hello|hey|yo|sup|hola|salam|assalam)\b/,()=>pick("greet",SANTA.greet).replace("NICK",currentProfile.nickname||currentProfile.username)],
+  [/joke|funny|make me laugh/,()=>santaJoke()],
+  [/riddle|puzzle|brain teaser/,()=>santaRiddle()],
+  [/roast/,t=>santaRoast(/boss/.test(t)?"boss":/santa|yourself/.test(t)?"santa":"user")],
+  [/(create|make|start|set ?up|host).*private|private.*server/,()=>SANTA_TEXT.privateServer],
+  [/(create|make|start|set ?up|host).*server|how.*server/,()=>SANTA_TEXT.server],
+  [/invite/,()=>SANTA_TEXT.privateServer],
+  [/(join|leave|find|discover|search).*server/,()=>SANTA_TEXT.joinServer],
+  [/birthday|bday/,()=>SANTA_TEXT.birthday],
+  [/notif|bell|alert/,()=>SANTA_TEXT.notif],
+  [/file|transfer|storage|upload|share/,()=>SANTA_TEXT.files],
+  [/report|moderat|abuse|spam|harass/,()=>SANTA_TEXT.report],
+  [/game|play|bored|quiz|score|\bxp\b/,()=>SANTA_TEXT.games],
+  [/password|log ?in|sign ?in/,()=>SANTA_TEXT.login],
+  [/thank|thx|\bty\b/,()=>pick("thanks",SANTA.thanks)],
+  [/who are you|what are you|are you (an? )?(ai|bot|human|real)|what can you do|can you think/,()=>SANTA_TEXT.about]
+];
+async function santaReply(raw){
+  const t=raw.toLowerCase().trim().replace(/[!?.,]+$/,"");
+  if(t.startsWith("/")){const [c,...rest]=t.split(/\s+/);const fn=SANTA_CMDS[c];return fn?await fn(rest.join(" ")):"Unknown command "+c+". Type /help.";}
+  if(santaState.riddle&&t.split(/\s+/).length<=6){
+    if(/^(hint|give up|i give up|skip)$/.test(t))return SANTA_CMDS[t==="hint"?"/hint":"/giveup"]();
+    if(norm(t).includes(santaState.riddle.k||norm(santaState.riddle.a))){santaState.riddle=null;return pick("right",SANTA.right);}
+    return pick("wrong",SANTA.wrong);
+  }
+  for(const [re,fn] of SANTA_INTENTS)if(re.test(t))return fn(t);
+  return pick("unknown",SANTA.unknown);
+}
+async function runSanta(value,log){
+  const cmd=value.trim();if(!cmd)return;
+  log.append(el("p",{class:"chat-message chat-user"},"YOU: "+cmd));
+  let response;try{response=await santaReply(cmd);}catch(e){response="Something short-circuited: "+e.message;}
+  log.append(el("p",{class:"chat-message chat-santa"},"SANTA: "+response));log.scrollTop=log.scrollHeight;
+}
+/*SANTA-END*/
+
+function closeModule(){
+  clearInterval(quizTimer);
+  if(serverChatUnsub)serverChatUnsub();serverChatUnsub=null;
+  if(chatUnsubscribe)chatUnsubscribe();
+  if(reportUnsubscribe)reportUnsubscribe();
+  chatUnsubscribe=reportUnsubscribe=null;
+  $("modal").classList.add("hidden");
+  $("extraContent").replaceChildren();
+  document.body.style.overflow="";
+}
+window.closeModule=closeModule;
+const ACCENTS={LIBRARY:"#c9a15a",STORAGE:"#6f86b8",GAMES:"#e0476b",RIDDLES:"#a678e0",QUIZ:"#e08a3d",LINKS:"#4fb0b3",CHAT:"#e32643",SERVERS:"#d4584a",PROFILES:"#c98aa5",NOTIFICATIONS:"#e0b04a",SANTA:"#ff4d6a"};
+document.querySelectorAll(".module").forEach(m=>{const k=(m.getAttribute("onclick")||"").match(/openModule\('(\w+)'\)/)?.[1];if(k&&ACCENTS[k])m.style.setProperty("--accent",ACCENTS[k]);});
+document.querySelectorAll(".module").forEach(m=>{m.setAttribute("role","button");m.tabIndex=0;m.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();m.click();}});});
+document.addEventListener("keydown",event=>{if(event.key==="Escape"&&!$("modal").classList.contains("hidden"))closeModule();});
+</script>
+
+</body>
+</html>
